@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hostel_booking/HOME2/home1.dart';
+import 'package:hostel_booking/Productpage/productpage.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -115,7 +115,7 @@ class _HomepageState extends State<Homepage> {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => homenew()),
+          MaterialPageRoute(builder: (context) => Prodectpage()),
         );
       },
       child: Card(
@@ -132,7 +132,6 @@ class _HomepageState extends State<Homepage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Price + Rating
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
