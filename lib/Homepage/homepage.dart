@@ -21,24 +21,53 @@ class _HomepageState extends State<Homepage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const CircleAvatar(
-                    radius: 20,
-                    backgroundColor: Colors.black12,
-                    child: Icon(Icons.person, color: Colors.black),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.add, size: 28),
-                    onPressed: () {},
+                  Row(
+                    children: [
+                      const CircleAvatar(
+                        radius: 22,
+                        backgroundColor: Colors.black12,
+                        child: Icon(Icons.person, color: Colors.black),
+                      ),
+                      SizedBox(
+                        width: 5,
+                      ),
+                      Column(crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("AKSHAY",style: TextStyle(
+                            fontSize: 17,
+                            fontWeight: FontWeight.bold
+                          ),),
+                          Row(
+                            children: [
+                              Icon(Icons.location_on,size: 13,color: const Color.fromARGB(255, 199, 117, 23)),
+                              Text("Choose Your Location",style: TextStyle(
+                                fontSize: 13,color: const Color.fromARGB(255, 199, 117, 23)
+                              ),),
+                            ],
+                          )
+                        ],
+                      )
+                    ],
                   ),
                 ],
               ),
+              
               const SizedBox(height: 20),
               const Text(
                 "Find Perfect Local Hosts in the Area",
                 style: TextStyle(
-                  fontSize: 26,
+                  fontSize: 22,
                   fontWeight: FontWeight.bold,
                   height: 1.3,
+                ),
+              ),const SizedBox(height: 20),
+              TextFormField(
+                decoration: InputDecoration(
+                  prefixIcon: Icon(Icons.search_rounded),
+                  hintText: "Search",
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(15)
+                  )
                 ),
               ),
               const SizedBox(height: 16),
@@ -92,13 +121,13 @@ class _HomepageState extends State<Homepage> {
       margin: const EdgeInsets.only(right: 12),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: selected ? Colors.pink.shade100 : Colors.grey.shade200,
+        color: selected ? Colors.lightBlue.shade100 : Colors.grey.shade200,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
         title,
         style: TextStyle(
-          color: selected ? Colors.pink : Colors.black87,
+          color: selected ? Colors.lightBlue: Colors.black87,
           fontWeight: FontWeight.w600,
         ),
       ),
@@ -139,10 +168,10 @@ class _HomepageState extends State<Homepage> {
                           style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
-                              color: Colors.pink)),
+                              color: Colors.lightBlue,)),
                       Row(
                         children: [
-                          const Icon(Icons.star, color: Colors.pink, size: 18),
+                          const Icon(Icons.star, color: Colors.red, size: 18),
                           Text(rating,
                               style: const TextStyle(
                                   fontWeight: FontWeight.w600, fontSize: 14)),

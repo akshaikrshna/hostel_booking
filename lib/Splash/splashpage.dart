@@ -21,7 +21,16 @@ class _SplashpageState extends State<Splashpage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(child: Text("Welcome")),
+
+        body: Center(
+          child: Column(mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.house,size: 90,color: Colors.lightBlue,),
+            Text("Where Is My Hostel",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 22),)
+            ],
+            
+          ),
+        ),
     );
   }
 }
