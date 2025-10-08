@@ -1,4 +1,7 @@
+import 'package:country_code_picker_plus/country_code_picker_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:hostel_booking/Auth/authservice.dart';
+import 'package:hostel_booking/Login/loginpage.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -11,29 +14,28 @@ class _RegisterPageState extends State<RegisterPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
-  final _userFormKey = GlobalKey<FormState>();
-  final _ownerFormKey = GlobalKey<FormState>();
+  bool obscurePassword=true;
 
-  // Controllers for user fields
-  final TextEditingController _userNameController = TextEditingController();
-  final TextEditingController _userEmailController = TextEditingController();
-  final TextEditingController _userNumberController = TextEditingController();
-  final TextEditingController _userPasswordController = TextEditingController();
-  final TextEditingController _userconfirmPasswordController =
-      TextEditingController();
+final _userFormKey = GlobalKey<FormState>();
+final _vendorFormkey = GlobalKey<FormState>();
 
-  // Controllers for turf owner fields
-  final TextEditingController _ownerNameController = TextEditingController();
-  final TextEditingController _turfNameController = TextEditingController();
-  final TextEditingController _ownerEmailController = TextEditingController();
-  final TextEditingController _ownerNumberController = TextEditingController();
-  final TextEditingController _ownerPasswordController =
-      TextEditingController();
-  final TextEditingController _ownerlocationController =
-      TextEditingController();
-  final TextEditingController _ownerAddressController = TextEditingController();
-  final TextEditingController _ownerrateController = TextEditingController();
- 
+final _authservice =AuthService();
+
+// username controller
+final TextEditingController _userNameController = TextEditingController();
+final TextEditingController _userPhonenumberController = TextEditingController();
+final TextEditingController _userEmailController = TextEditingController(); 
+final TextEditingController _userPasswordController = TextEditingController();
+final TextEditingController _userconfirmPasswordController = TextEditingController();
+
+// ventor controller
+final TextEditingController _vendorNameController =TextEditingController();
+final TextEditingController _vendorBussinessnameController = TextEditingController();
+final TextEditingController _vendorAddresController = TextEditingController();
+final TextEditingController _vendorCityController = TextEditingController();
+final TextEditingController _vendorEmailController = TextEditingController();
+final TextEditingController _vendorPasswordController = TextEditingController();
+final TextEditingController _vendorPhonenumberController = TextEditingController();
 
 
   @override
@@ -51,12 +53,12 @@ class _RegisterPageState extends State<RegisterPage>
   InputDecoration _inputDecoration(String hint) {
     return InputDecoration(
       filled: true,
-      fillColor: const Color(0x40D9D9D9),
+      fillColor: Colors.white,
       hintText: hint,
       hintStyle: const TextStyle(
         color: Colors.grey,
         fontWeight: FontWeight.w300,
-        fontSize: 14,
+        fontSize: 14, 
       ),
       enabledBorder: OutlineInputBorder(
         borderSide: const BorderSide(
@@ -66,7 +68,7 @@ class _RegisterPageState extends State<RegisterPage>
         borderRadius: BorderRadius.circular(10),
       ),
       focusedBorder: OutlineInputBorder(
-        borderSide: const BorderSide(color: Color(0xFFD4D4D4), width: 2),
+        borderSide: const BorderSide(color: Color.fromARGB(255, 225, 225, 225), width: 2),
         borderRadius: BorderRadius.circular(10),
       ),
     );
@@ -87,16 +89,17 @@ class _RegisterPageState extends State<RegisterPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor:Colors.white,
       appBar: AppBar(
+        centerTitle: true,
         leading: SizedBox(),
-        backgroundColor: Colors.white,
-        title: const Text("Register", style: TextStyle(color: Colors.black)),
+        backgroundColor:  Colors.white,
+        title: const Text("Register", style: TextStyle(color: Colors.black,fontSize: 26,fontWeight: FontWeight.w500)),
         bottom: TabBar(
           controller: _tabController,
-          labelColor: Colors.green,
+          labelColor:  Colors.lightBlue,
           unselectedLabelColor: Colors.grey,
-          indicatorColor: Colors.green,
+          indicatorColor: Colors.lightBlue,
           tabs: const [Tab(text: "User"), Tab(text: "Vendor")],
         ),
       ),
@@ -128,20 +131,88 @@ class _RegisterPageState extends State<RegisterPage>
                     style: TextStyle(fontWeight: FontWeight.w400),
                   ),
                   const SizedBox(height: 5),
-                  TextFormField(
-                    controller: _userNumberController,
-                    keyboardType: TextInputType.phone, // ✅ numeric keyboard
-                    decoration: _inputDecoration("Enter your phone number"),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "Enter your phone number";
-                      }
-                      if (value.length < 10) {
-                        return "Phone number must be at least 10 digits";
-                      }
-                      return null; // ✅ valid
-                    },
+                  Container(
+                    decoration: BoxDecoration(
+                      
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black12,
+                          blurRadius: 6,
+                          offset: Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      children: [
+                        // Country Code Picker
+                        CountryCodePicker(
+                          onChanged: (country) {
+                            setState(() {
+                              // selectedCountryCode = country.dialCode!;
+                            });
+                          },
+                          initialSelection: 'IN',
+                          favorite: ['+91', 'IN', '+1', 'US'],
+                          showCountryOnly: false,
+                          showOnlyCountryWhenClosed: false,
+                          alignLeft: false,
+                          textStyle: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            color: Color(0xFF3E4F39),
+                          ),
+                          dialogTextStyle: TextStyle(
+                            fontSize: 16,
+                            color: Colors.black87,
+                          ),
+                          searchDecoration: InputDecoration(
+                            hintText: 'Search country',
+                            prefixIcon: Icon(Icons.search),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          dialogSize: Size(
+                            MediaQuery.of(context).size.width * 0.9,
+                            MediaQuery.of(context).size.height * 0.7,
+                          ),
+                        ),
+                        // Divider
+                        Container(
+                          height: 24,
+                          width: 1,
+                          color: Colors.grey.shade300,
+                        ),
+                        // Phone Number Field
+                        Expanded(
+                          child: TextFormField(
+                            controller: _userPhonenumberController,
+                            keyboardType: TextInputType.phone,
+                            decoration: InputDecoration(
+                             
+                              hintText: 'Phone Number',
+                              border: InputBorder.none,
+                              contentPadding: EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 16,
+                              ),
+                              hintStyle: TextStyle(
+                                color: Colors.grey.shade400,
+                                fontSize: 16,
+                              ),
+                            ),
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
+                  
 
                   const SizedBox(height: 15),
 
@@ -164,9 +235,38 @@ class _RegisterPageState extends State<RegisterPage>
                   ),
                   const SizedBox(height: 5),
                   TextFormField(  
-                    controller: _userPasswordController,
-                    obscureText: true,
-                    decoration: _inputDecoration("Enter your password"),
+                    obscureText: obscurePassword,
+                    controller: _userconfirmPasswordController,
+                    decoration:InputDecoration(
+                     suffixIcon: IconButton(
+                      icon: Icon(
+                          obscurePassword ? Icons.visibility_off : Icons.visibility),
+                      onPressed: () {
+                        setState(() {
+                          obscurePassword = !obscurePassword;
+                        });
+                      },
+                    ),
+      filled: true,
+      fillColor: Colors.white,
+      hintText: "Enter Your Password",
+      hintStyle: const TextStyle(
+        color: Colors.grey,
+        fontWeight: FontWeight.w300,
+        fontSize: 14, 
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderSide: const BorderSide(
+          color: Color.fromARGB(255, 225, 225, 225),
+          width: 1,
+        ),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderSide: const BorderSide(color: Color.fromARGB(255, 225, 225, 225), width: 2),
+        borderRadius: BorderRadius.circular(10),
+      ),
+    ),
                     validator:
                         (value) =>
                             value!.length < 6 ? "Min 6 characters" : null,
@@ -179,19 +279,42 @@ class _RegisterPageState extends State<RegisterPage>
                     style: TextStyle(fontWeight: FontWeight.w400),
                   ),
                   const SizedBox(height: 5),
-                  TextFormField(
-                    controller: _userconfirmPasswordController,
-                    obscureText: true,
-                    decoration: _inputDecoration("Confirm your password"),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "Please confirm your password";
-                      }
-                      if (value != _userPasswordController.text) {
-                        return "Passwords do not match";
-                      }
-                      return null; // ✅ no error
-                    },
+                  TextFormField(  
+                    obscureText: obscurePassword,
+                    controller: _userPasswordController,
+                    decoration:InputDecoration(
+                     suffixIcon: IconButton(
+                      icon: Icon(
+                          obscurePassword ? Icons.visibility_off : Icons.visibility),
+                      onPressed: () {
+                        setState(() {
+                          obscurePassword = !obscurePassword;
+                        });
+                      },
+                    ),
+      filled: true,
+      fillColor: Colors.white,
+      hintText: "Confirm Your Password",
+      hintStyle: const TextStyle(
+        color: Colors.grey,
+        fontWeight: FontWeight.w300,
+        fontSize: 14, 
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderSide: const BorderSide(
+          color: Color.fromARGB(255, 225, 225, 225),
+          width: 1,
+        ),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderSide: const BorderSide(color: Color.fromARGB(255, 225, 225, 225), width: 2),
+        borderRadius: BorderRadius.circular(10),
+      ),
+    ),
+                    validator:
+                        (value) =>
+                            value!.length < 6 ? "Min 6 characters" : null,
                   ),
                   const SizedBox(height: 30),
 
@@ -201,19 +324,25 @@ class _RegisterPageState extends State<RegisterPage>
                       onTap: () async {
                        
                       },
-                      child: Container(
-                        height: 50,
-                        width: 350,
-                        decoration: BoxDecoration(
-                          color: const Color.fromARGB(255, 5, 90, 8),
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        child: const Center(
-                          child: Text(
-                            "Register as vendor",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                      child: GestureDetector(
+                        onTap: () async{
+                          await _authservice.signup(name: _userNameController.text, phonenumber: _userPhonenumberController.text, email: _userEmailController.text, password: _userPasswordController.text);
+                          Navigator.pop(context);
+                        },
+                        child: Container(
+                          height: 50,
+                          width: 350,
+                          decoration: BoxDecoration(
+                            color:  Colors.lightBlue,
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          child: const Center(
+                            child: Text(
+                              "Register as User",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
                             ),
                           ),
                         ),
@@ -225,11 +354,10 @@ class _RegisterPageState extends State<RegisterPage>
             ),
           ),
 
-          // -------- OWNER FORM ----------
           SingleChildScrollView(
             padding: const EdgeInsets.all(16.0),
             child: Form(
-              key: _ownerFormKey,
+              key: _vendorFormkey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -239,7 +367,7 @@ class _RegisterPageState extends State<RegisterPage>
                   ),
                   const SizedBox(height: 5),
                   TextFormField(
-                    controller: _ownerNameController,
+                    controller: _vendorNameController,
                     decoration: _inputDecoration("Enter Ventor name"),
                     validator:
                         (value) => value!.isEmpty ? "Enter your name" : null,
@@ -252,7 +380,7 @@ class _RegisterPageState extends State<RegisterPage>
                   ),
                   const SizedBox(height: 5),
                   TextFormField(
-                    controller: _ownerNumberController,
+                    controller: _vendorBussinessnameController,
                     decoration: _inputDecoration("Enter your Bussiness "),
                   
                   ),
@@ -264,7 +392,7 @@ class _RegisterPageState extends State<RegisterPage>
                   ),
                   const SizedBox(height: 5),
                   TextFormField(
-                    controller: _turfNameController,
+                    controller: _vendorAddresController,
                     decoration: _inputDecoration("Enter Your Address"),
                        validator:
                         (value) => value!.isEmpty ? "Enter your address" : null,
@@ -278,7 +406,7 @@ class _RegisterPageState extends State<RegisterPage>
                   ),
                   const SizedBox(height: 5),
                   TextFormField(
-                    controller: _ownerEmailController,
+                    controller: _vendorCityController,
                     decoration: _inputDecoration("Enter your City"),
                      validator:
                         (value) =>
@@ -293,7 +421,7 @@ class _RegisterPageState extends State<RegisterPage>
                   ),
                   const SizedBox(height: 5),
                   TextFormField(
-                    controller: _ownerPasswordController,
+                    controller: _vendorEmailController,
                     obscureText: true,
                     decoration: _inputDecoration("Enter your Email"),
                     validator:
@@ -306,14 +434,42 @@ class _RegisterPageState extends State<RegisterPage>
                     style: TextStyle(fontWeight: FontWeight.w400),
                   ),
                   const SizedBox(height: 5),
-                  TextFormField(
-                    controller: _ownerlocationController,
-
-                    decoration: _inputDecoration("Enter your Password"),
-                     validator:
+                 TextFormField(  
+                    obscureText: obscurePassword,
+                    controller: _vendorPasswordController,
+                    decoration:InputDecoration(
+                     suffixIcon: IconButton(
+                      icon: Icon(
+                          obscurePassword ? Icons.visibility_off : Icons.visibility),
+                      onPressed: () {
+                        setState(() {
+                          obscurePassword = !obscurePassword;
+                        });
+                      },
+                    ),
+      filled: true,
+      fillColor: Colors.white,
+      hintText: "Enter Your Password",
+      hintStyle: const TextStyle(
+        color: Colors.grey,
+        fontWeight: FontWeight.w300,
+        fontSize: 14, 
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderSide: const BorderSide(
+          color: Color.fromARGB(255, 225, 225, 225),
+          width: 1,
+        ),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderSide: const BorderSide(color: Color.fromARGB(255, 225, 225, 225), width: 2),
+        borderRadius: BorderRadius.circular(10),
+      ),
+    ),
+                    validator:
                         (value) =>
                             value!.length < 6 ? "Min 6 characters" : null,
-                
                   ),
                   const SizedBox(height: 15),
 
@@ -322,19 +478,86 @@ class _RegisterPageState extends State<RegisterPage>
                     style: TextStyle(fontWeight: FontWeight.w400),
                   ),
                   const SizedBox(height: 5),
-                  TextFormField(
-                    controller: _ownerAddressController,
-
-                    decoration: _inputDecoration("Enter your Phone Number"),
-                 validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "Enter your phone number";
-                      }
-                      if (value.length < 10) {
-                        return "Phone number must be at least 10 digits";
-                      }
-                      return null; // ✅ valid
-                    },
+                 Container(
+                    decoration: BoxDecoration(
+                      
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black12,
+                          blurRadius: 6,
+                          offset: Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      children: [
+                        // Country Code Picker
+                        CountryCodePicker(
+                          onChanged: (country) {
+                            setState(() {
+                              // selectedCountryCode = country.dialCode!;
+                            });
+                          },
+                          initialSelection: 'IN',
+                          favorite: ['+91', 'IN', '+1', 'US'],
+                          showCountryOnly: false,
+                          showOnlyCountryWhenClosed: false,
+                          alignLeft: false,
+                          textStyle: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            color: Color(0xFF3E4F39),
+                          ),
+                          dialogTextStyle: TextStyle(
+                            fontSize: 16,
+                            color: Colors.black87,
+                          ),
+                          searchDecoration: InputDecoration(
+                            hintText: 'Search country',
+                            prefixIcon: Icon(Icons.search),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          dialogSize: Size(
+                            MediaQuery.of(context).size.width * 0.9,
+                            MediaQuery.of(context).size.height * 0.7,
+                          ),
+                        ),
+                        // Divider
+                        Container(
+                          height: 24,
+                          width: 1,
+                          color: Colors.grey.shade300,
+                        ),
+                        // Phone Number Field
+                        Expanded(
+                          child: TextFormField(
+                            controller: _vendorPhonenumberController,
+                            keyboardType: TextInputType.phone,
+                            decoration: InputDecoration(
+                             
+                              hintText: 'Phone Number',
+                              border: InputBorder.none,
+                              contentPadding: EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 16,
+                              ),
+                              hintStyle: TextStyle(
+                                color: Colors.grey.shade400,
+                                fontSize: 16,
+                              ),
+                            ),
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
 
                   SizedBox(height: 15),
@@ -347,19 +570,24 @@ class _RegisterPageState extends State<RegisterPage>
                       onTap: () async {
                         
                       },
-                      child: Container(
-                        height: 50,
-                        width: 350,
-                        decoration: BoxDecoration(
-                          color: const Color.fromARGB(255, 5, 90, 8),
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        child: const Center(
-                          child: Text(
-                            "Registor",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                        child: Container(
+                          height: 50,
+                          width: 350,
+                          decoration: BoxDecoration(
+                            color:  Colors.lightBlue,
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          child: const Center(
+                            child: Text(
+                              "Registor as vendor",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
                             ),
                           ),
                         ),

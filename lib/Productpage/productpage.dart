@@ -36,11 +36,11 @@ class _ProdectpageState extends State<Prodectpage> {
             Padding(
               padding: const EdgeInsets.only(top: 320),
               child: Container(
-                height: 647,
+                height: 677,
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 233, 224, 224),
-                  borderRadius: BorderRadius.only(topLeft: Radius.circular(45),topRight: Radius.circular(45))
+                  color: const Color.fromARGB(255, 243, 242, 242),
+                  borderRadius: BorderRadius.only(topLeft: Radius.circular(28),topRight: Radius.circular(28))
                 ),
                 child: Padding(
                   padding: const EdgeInsets.only(top: 15,left: 32),
@@ -48,18 +48,18 @@ class _ProdectpageState extends State<Prodectpage> {
 
                     children: [
                         SizedBox(
-                          height: 65,
+                          height: 53,
                           width: 413,
                           child: ListView.builder(
                             scrollDirection: Axis.horizontal,
                             itemCount: 4,
                             itemBuilder: (context, index) {
                             return  Padding(
-                              padding: const EdgeInsets.only(right: 7),
+                              padding: const EdgeInsets.only(right: 10),
                               child: Container(
-                                  height: 55,
+                                  height: 45,
                                   width: 86,
-                                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(20),
+                                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(15),
                                     color: const Color.fromARGB(255, 165, 165, 30)
                                   ),
                                 ),
@@ -67,13 +67,59 @@ class _ProdectpageState extends State<Prodectpage> {
                           },
                           ),
                         ),
+                        SizedBox(
+                          height: 65,
+                          child: Row(
+                            children: [
+                              Text("\$220",style: TextStyle(
+                                fontSize: 25,
+                                fontWeight: FontWeight.w800,
+                                color: Colors.lightBlue,
+                              ),),
+                              Text(" /day",style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w800,
+                                color: const Color.fromARGB(255, 145, 143, 144),
+                              ),),
+                              SizedBox(
+                                width: 232,
+                              ),
+                              Icon(Icons.star,color: Colors.pink,),
+                              Text("4.5",style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 17,
+                                fontWeight: FontWeight.w600,
+                              ),)
+                            ],
+                          ),
+                        ),
+                        Row(
+                          children: [
+                            Container(
+                              height: 65,
+                              width: 65,
+                              
+                            decoration: BoxDecoration(
+                              color: const Color.fromARGB(31, 37, 34, 34),
+                              borderRadius: BorderRadius.circular(18)
+                            ),
+                            ),
+                            Column
+                            (
+                              children: [
+                                Text("Owner Apartment"),
+                                Text("AlbertFlores")
+                              ],
+                            )
+                          ],
+                        ),
                       Padding(
                         padding: const EdgeInsets.only(right: 30,top: 25),
                         child: Container(
                           height: 68,
                           width: 420,
                          decoration: 
-                         BoxDecoration( color: Colors.pink,
+                         BoxDecoration( color: Colors.lightBlue,
                           borderRadius: BorderRadius.circular(20)
                          ),
                          child: Center(child: Text("Buy Now",style: TextStyle(
