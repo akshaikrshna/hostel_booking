@@ -1,13 +1,15 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:hostel_booking/Notifications/firebase_api.dart';
 import 'package:hostel_booking/Splash/splashpage.dart';
 
-void main(){
+void main()async{
   WidgetsFlutterBinding.ensureInitialized();
-  Firebase.initializeApp();
+  await Firebase.initializeApp();
+  await  FirebaseApi().initNotifications();
 
   
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
