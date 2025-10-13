@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:hostel_booking/Notifications/firebase_api.dart';
 import 'package:hostel_booking/Splash/splashpage.dart';
+import 'package:hostel_booking/admin/bottomnav.dart';
 
 void main()async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,6 +18,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(debugShowCheckedModeBanner: false,
-    home: Splashpage(),);
+    home: Bottomnav(),);
   }
 }
