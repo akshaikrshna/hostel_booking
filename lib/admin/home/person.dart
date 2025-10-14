@@ -91,7 +91,7 @@ class _PersonState extends State<Person> {
                ),
                 ),
                 ),
-                SizedBox(height: 6,),
+                SizedBox(height: 10,),
                 Container(
                   height: 42,
                   width: 120,

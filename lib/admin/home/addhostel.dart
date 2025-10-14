@@ -11,7 +11,12 @@ class _AddhostelState extends State<Addhostel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Text("data"),
+      body: Column(
+        children: [
+          Text("data "),
+         
+        ],
+      ),
     );
   }
 }
