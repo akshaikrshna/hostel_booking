@@ -1,3 +1,4 @@
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter/material.dart';
 
 class Adminpage extends StatefulWidget {
@@ -12,7 +13,7 @@ class _HomepageState extends State<Adminpage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: CircleAvatar(radius: 9,),
+        leading: CircleAvatar(radius: 9.r),
       ),
     body: SingleChildScrollView(
       child: Column(
@@ -22,7 +23,7 @@ class _HomepageState extends State<Adminpage> {
             child: Card(
               margin: const EdgeInsets.only(bottom: 16),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(16.r),
               ),
               clipBehavior: Clip.antiAlias,
               child: Column(
@@ -30,7 +31,7 @@ class _HomepageState extends State<Adminpage> {
                 children: [
                   Image.network(
                     "https://cdn.houseplansservices.com/product/g8don8g8g04bdnb7mfss65rj62/w560x373.jpg?v=2",
-                    height: 180,
+                    height: 180.h,
                     width: double.infinity,
                     fit: BoxFit.cover,
                   ),
@@ -45,50 +46,50 @@ class _HomepageState extends State<Adminpage> {
                           children: [
                             Text(
                               "price",
-                              style: const TextStyle(
-                                fontSize: 18,
+                              style:  TextStyle(
+                                fontSize: 18.sp,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.lightBlue,
                               ),
                             ),
                             Row(
                               children: [
-                                const Icon(
+                                 Icon(
                                   Icons.star,
                                   color: Colors.red,
-                                  size: 18,
+                                  size: 18.sp,
                                 ),
                                 Text(
                                   "rating",
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontWeight: FontWeight.w600,
-                                    fontSize: 14,
+                                    fontSize: 14.sp,
                                   ),
                                 ),
                               ],
                             ),
                           ],
                         ),
-                        const SizedBox(height: 6),
+                         SizedBox(height: 6.h),
                         Text(
                           "title",
-                          style: const TextStyle(
-                            fontSize: 16,
+                          style: TextStyle(
+                            fontSize: 16.sp,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        const SizedBox(height: 4),
+                        SizedBox(height: 4.h),
                         Row(
                           children: [
-                            const Icon(
+                           Icon(
                               Icons.location_on,
-                              size: 16,
+                              size: 16.sp,
                               color: Colors.grey,
                             ),
-                            const SizedBox(width: 4),
+                             SizedBox(width: 4.w),
                             Text(
                               "City",
-                              style: const TextStyle(color: Colors.grey),
+                              style: TextStyle(color: Colors.grey),
                             ),
                           ],
                         ),
@@ -105,7 +106,7 @@ class _HomepageState extends State<Adminpage> {
             child: Card(
               margin: const EdgeInsets.only(bottom: 16),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(16.r),
               ),
               clipBehavior: Clip.antiAlias,
               child: Column(
@@ -113,7 +114,7 @@ class _HomepageState extends State<Adminpage> {
                 children: [
                   Image.network(
                     "https://cdn.houseplansservices.com/content/9a0kud8eguqun8d72nctn0all2/w991x660.jpg?v=10",
-                    height: 180,
+                    height: 180.h,
                     width: double.infinity,
                     fit: BoxFit.cover,
                   ),
@@ -128,50 +129,50 @@ class _HomepageState extends State<Adminpage> {
                           children: [
                             Text(
                               "price",
-                              style: const TextStyle(
-                                fontSize: 18,
+                              style:  TextStyle(
+                                fontSize: 18.sp,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.lightBlue,
                               ),
                             ),
                             Row(
                               children: [
-                                const Icon(
+                                 Icon(
                                   Icons.star,
                                   color: Colors.red,
-                                  size: 18,
+                                  size: 18.sp,
                                 ),
                                 Text(
                                   "rating",
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontWeight: FontWeight.w600,
-                                    fontSize: 14,
+                                    fontSize: 14.sp,
                                   ),
                                 ),
                               ],
                             ),
                           ],
                         ),
-                        const SizedBox(height: 6),
+                         SizedBox(height: 6.h),
                         Text(
                           "title",
-                          style: const TextStyle(
-                            fontSize: 16,
+                          style:  TextStyle(
+                            fontSize: 16.sp,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        const SizedBox(height: 4),
+                         SizedBox(height: 4.h),
                         Row(
                           children: [
-                            const Icon(
+                             Icon(
                               Icons.location_on,
                               size: 16,
                               color: Colors.grey,
                             ),
-                            const SizedBox(width: 4),
+                             SizedBox(width: 4.h),
                             Text(
                               "City",
-                              style: const TextStyle(color: Colors.grey),
+                              style:  TextStyle(color: Colors.grey),
                             ),
                           ],
                         ),

@@ -1,5 +1,8 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:hostel_booking/Auth/authservice.dart';
+import 'package:hostel_booking/BottomNavBar/bottomnavbar.dart';
 import 'package:hostel_booking/Homepage/homepage.dart';
 import 'package:hostel_booking/Signup/signuppage.dart';
 
@@ -11,14 +14,14 @@ class Loginpage extends StatefulWidget {
 }
 
 class _LoginpageState extends State<Loginpage> {
-   bool obscurePassword = true;
+  bool obscurePassword = true;
 
-   final _formkey = GlobalKey<FormState>();
+  final _formkey = GlobalKey<FormState>();
 
-   final _authservice = AuthService(); 
+  final _authservice = AuthService();
 
-   TextEditingController _emailController = TextEditingController();
-   TextEditingController _passwordController = TextEditingController();
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +38,7 @@ class _LoginpageState extends State<Loginpage> {
                   // Logo
                   Column(
                     children: const [
-                      Icon(Icons.house, size: 60, color: Colors.lightBlue,),
+                      Icon(Icons.house, size: 60, color: Colors.lightBlue),
                       SizedBox(height: 8),
                       Text(
                         "My Hostel",
@@ -48,7 +51,7 @@ class _LoginpageState extends State<Loginpage> {
                     ],
                   ),
                   const SizedBox(height: 40),
-              
+
                   // Email field
                   TextFormField(
                     controller: _emailController,
@@ -56,22 +59,23 @@ class _LoginpageState extends State<Loginpage> {
                       prefixIcon: const Icon(Icons.email_outlined),
                       hintText: "Email Address",
                       border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8)),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                     ),
                     validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter an email address';
-                    }
-                    String pattern =
-                        r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$';
-                    RegExp regex = RegExp(pattern);
-                    if (!regex.hasMatch(value)) {
-                      return 'Please enter a valid email address';
-                    }
-                  },
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter an email address';
+                      }
+                      String pattern =
+                          r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$';
+                      RegExp regex = RegExp(pattern);
+                      if (!regex.hasMatch(value)) {
+                        return 'Please enter a valid email address';
+                      }
+                    },
                   ),
                   const SizedBox(height: 16),
-              
+
                   // Password field
                   TextFormField(
                     controller: _passwordController,
@@ -80,7 +84,10 @@ class _LoginpageState extends State<Loginpage> {
                       prefixIcon: const Icon(Icons.lock_outline),
                       suffixIcon: IconButton(
                         icon: Icon(
-                            obscurePassword ? Icons.visibility_off : Icons.visibility),
+                          obscurePassword
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                        ),
                         onPressed: () {
                           setState(() {
                             obscurePassword = !obscurePassword;
@@ -89,14 +96,15 @@ class _LoginpageState extends State<Loginpage> {
                       ),
                       hintText: "Password",
                       border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8)),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                     ),
                     validator: (value) => value!.length <= 8
-                      ? "Name should be at least 8 characters"
-                      : null,
+                        ? "Name should be at least 8 characters"
+                        : null,
                   ),
                   const SizedBox(height: 10),
-              
+
                   // Forgot password
                   Align(
                     alignment: Alignment.centerRight,
@@ -106,30 +114,40 @@ class _LoginpageState extends State<Loginpage> {
                     ),
                   ),
                   const SizedBox(height: 20),
-              
+
                   // Login button
                   SizedBox(
                     width: double.infinity,
                     height: 50,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                          backgroundColor:  Colors.lightBlue,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8))),
-                      onPressed: () async{
-                        if(_formkey.currentState!.validate()){
-                           await _authservice.login(email: _emailController.text, password: _passwordController.text);
-                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Homepage(),));
+                        backgroundColor: Colors.lightBlue,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      onPressed: () async {
+                        if (_formkey.currentState!.validate()) {
+                          String? result = await _authservice.login(
+                            context: context,
+                            email: _emailController.text,
+                            password: _passwordController.text,
+                          );
+                          
                         }
-                     
                       },
-                      child: const Text("LOGIN",
-                          style: TextStyle(
-                              color: Colors.white,fontSize: 16, fontWeight: FontWeight.bold)),
+                      child: const Text(
+                        "LOGIN",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 20),
-              
+
                   // Social login
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -146,7 +164,7 @@ class _LoginpageState extends State<Loginpage> {
                     ],
                   ),
                   const SizedBox(height: 30),
-              
+
                   // Go to Signup
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -157,7 +175,8 @@ class _LoginpageState extends State<Loginpage> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const RegisterPage()),
+                              builder: (context) => const RegisterPage(),
+                            ),
                           );
                         },
                         child: const Text("Register"),

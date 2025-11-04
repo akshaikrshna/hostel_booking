@@ -2,6 +2,7 @@ import 'package:country_code_picker_plus/country_code_picker_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:hostel_booking/Auth/authservice.dart';
 import 'package:hostel_booking/Login/loginpage.dart';
+import 'package:hostel_booking/Model/usermodel.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -14,29 +15,33 @@ class _RegisterPageState extends State<RegisterPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
-  bool obscurePassword=true;
+  bool obscurePassword = true;
 
-final _userFormKey = GlobalKey<FormState>();
-final _vendorFormkey = GlobalKey<FormState>();
+  final _userFormKey = GlobalKey<FormState>();
+  final _vendorFormkey = GlobalKey<FormState>();
 
-final _authservice =AuthService();
+  final _authservice = AuthService();
 
-// username controller
-final TextEditingController _userNameController = TextEditingController();
-final TextEditingController _userPhonenumberController = TextEditingController();
-final TextEditingController _userEmailController = TextEditingController(); 
-final TextEditingController _userPasswordController = TextEditingController();
-final TextEditingController _userconfirmPasswordController = TextEditingController();
+  // username controller
+  final TextEditingController _userNameController = TextEditingController();
+  final TextEditingController _userPhonenumberController =
+      TextEditingController();
+  final TextEditingController _userEmailController = TextEditingController();
+  final TextEditingController _userPasswordController = TextEditingController();
+  final TextEditingController _userconfirmPasswordController =
+      TextEditingController();
 
-// ventor controller
-final TextEditingController _vendorNameController =TextEditingController();
-final TextEditingController _vendorBussinessnameController = TextEditingController();
-final TextEditingController _vendorAddresController = TextEditingController();
-final TextEditingController _vendorCityController = TextEditingController();
-final TextEditingController _vendorEmailController = TextEditingController();
-final TextEditingController _vendorPasswordController = TextEditingController();
-final TextEditingController _vendorPhonenumberController = TextEditingController();
-
+  // ventor controller
+  final TextEditingController _vendorNameController = TextEditingController();
+  final TextEditingController _vendorBussinessnameController =
+      TextEditingController();
+  final TextEditingController _vendorAddresController = TextEditingController();
+  final TextEditingController _vendorCityController = TextEditingController();
+  final TextEditingController _vendorEmailController = TextEditingController();
+  final TextEditingController _vendorPasswordController =
+      TextEditingController();
+  final TextEditingController _vendorPhonenumberController =
+      TextEditingController();
 
   @override
   void initState() {
@@ -58,7 +63,7 @@ final TextEditingController _vendorPhonenumberController = TextEditingController
       hintStyle: const TextStyle(
         color: Colors.grey,
         fontWeight: FontWeight.w300,
-        fontSize: 14, 
+        fontSize: 14,
       ),
       enabledBorder: OutlineInputBorder(
         borderSide: const BorderSide(
@@ -68,7 +73,10 @@ final TextEditingController _vendorPhonenumberController = TextEditingController
         borderRadius: BorderRadius.circular(10),
       ),
       focusedBorder: OutlineInputBorder(
-        borderSide: const BorderSide(color: Color.fromARGB(255, 225, 225, 225), width: 2),
+        borderSide: const BorderSide(
+          color: Color.fromARGB(255, 225, 225, 225),
+          width: 2,
+        ),
         borderRadius: BorderRadius.circular(10),
       ),
     );
@@ -89,18 +97,28 @@ final TextEditingController _vendorPhonenumberController = TextEditingController
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor:Colors.white,
+      backgroundColor: Colors.white,
       appBar: AppBar(
         centerTitle: true,
         leading: SizedBox(),
-        backgroundColor:  Colors.white,
-        title: const Text("Register", style: TextStyle(color: Colors.black,fontSize: 26,fontWeight: FontWeight.w500)),
+        backgroundColor: Colors.white,
+        title: const Text(
+          "Register",
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 26,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
         bottom: TabBar(
           controller: _tabController,
-          labelColor:  Colors.lightBlue,
+          labelColor: Colors.lightBlue,
           unselectedLabelColor: Colors.grey,
           indicatorColor: Colors.lightBlue,
-          tabs: const [Tab(text: "User"), Tab(text: "Vendor")],
+          tabs: const [
+            Tab(text: "User"),
+            Tab(text: "Vendor"),
+          ],
         ),
       ),
       body: TabBarView(
@@ -122,8 +140,8 @@ final TextEditingController _vendorPhonenumberController = TextEditingController
                   TextFormField(
                     controller: _userNameController,
                     decoration: _inputDecoration("Enter your full name"),
-                    validator:
-                        (value) => value!.isEmpty ? "Enter your name" : null,
+                    validator: (value) =>
+                        value!.isEmpty ? "Enter your name" : null,
                   ),
                   const SizedBox(height: 15),
                   const Text(
@@ -133,7 +151,6 @@ final TextEditingController _vendorPhonenumberController = TextEditingController
                   const SizedBox(height: 5),
                   Container(
                     decoration: BoxDecoration(
-                      
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(8),
                       boxShadow: [
@@ -191,7 +208,6 @@ final TextEditingController _vendorPhonenumberController = TextEditingController
                             controller: _userPhonenumberController,
                             keyboardType: TextInputType.phone,
                             decoration: InputDecoration(
-                             
                               hintText: 'Phone Number',
                               border: InputBorder.none,
                               contentPadding: EdgeInsets.symmetric(
@@ -212,7 +228,6 @@ final TextEditingController _vendorPhonenumberController = TextEditingController
                       ],
                     ),
                   ),
-                  
 
                   const SizedBox(height: 15),
 
@@ -224,8 +239,8 @@ final TextEditingController _vendorPhonenumberController = TextEditingController
                   TextFormField(
                     controller: _userEmailController,
                     decoration: _inputDecoration("Enter your email"),
-                    validator:
-                        (value) => value!.isEmpty ? "Enter your email" : null,
+                    validator: (value) =>
+                        value!.isEmpty ? "Enter your email" : null,
                   ),
                   const SizedBox(height: 15),
 
@@ -234,42 +249,47 @@ final TextEditingController _vendorPhonenumberController = TextEditingController
                     style: TextStyle(fontWeight: FontWeight.w400),
                   ),
                   const SizedBox(height: 5),
-                  TextFormField(  
+                  TextFormField(
                     obscureText: obscurePassword,
                     controller: _userconfirmPasswordController,
-                    decoration:InputDecoration(
-                     suffixIcon: IconButton(
-                      icon: Icon(
-                          obscurePassword ? Icons.visibility_off : Icons.visibility),
-                      onPressed: () {
-                        setState(() {
-                          obscurePassword = !obscurePassword;
-                        });
-                      },
+                    decoration: InputDecoration(
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          obscurePassword
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            obscurePassword = !obscurePassword;
+                          });
+                        },
+                      ),
+                      filled: true,
+                      fillColor: Colors.white,
+                      hintText: "Enter Your Password",
+                      hintStyle: const TextStyle(
+                        color: Colors.grey,
+                        fontWeight: FontWeight.w300,
+                        fontSize: 14,
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(
+                          color: Color.fromARGB(255, 225, 225, 225),
+                          width: 1,
+                        ),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(
+                          color: Color.fromARGB(255, 225, 225, 225),
+                          width: 2,
+                        ),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                     ),
-      filled: true,
-      fillColor: Colors.white,
-      hintText: "Enter Your Password",
-      hintStyle: const TextStyle(
-        color: Colors.grey,
-        fontWeight: FontWeight.w300,
-        fontSize: 14, 
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderSide: const BorderSide(
-          color: Color.fromARGB(255, 225, 225, 225),
-          width: 1,
-        ),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderSide: const BorderSide(color: Color.fromARGB(255, 225, 225, 225), width: 2),
-        borderRadius: BorderRadius.circular(10),
-      ),
-    ),
-                    validator:
-                        (value) =>
-                            value!.length < 6 ? "Min 6 characters" : null,
+                    validator: (value) =>
+                        value!.length < 6 ? "Min 6 characters" : null,
                   ),
 
                   const SizedBox(height: 15),
@@ -279,61 +299,84 @@ final TextEditingController _vendorPhonenumberController = TextEditingController
                     style: TextStyle(fontWeight: FontWeight.w400),
                   ),
                   const SizedBox(height: 5),
-                  TextFormField(  
+                  TextFormField(
                     obscureText: obscurePassword,
                     controller: _userPasswordController,
-                    decoration:InputDecoration(
-                     suffixIcon: IconButton(
-                      icon: Icon(
-                          obscurePassword ? Icons.visibility_off : Icons.visibility),
-                      onPressed: () {
-                        setState(() {
-                          obscurePassword = !obscurePassword;
-                        });
-                      },
+                    decoration: InputDecoration(
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          obscurePassword
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            obscurePassword = !obscurePassword;
+                          });
+                        },
+                      ),
+                      filled: true,
+                      fillColor: Colors.white,
+                      hintText: "Confirm Your Password",
+                      hintStyle: const TextStyle(
+                        color: Colors.grey,
+                        fontWeight: FontWeight.w300,
+                        fontSize: 14,
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(
+                          color: Color.fromARGB(255, 225, 225, 225),
+                          width: 1,
+                        ),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(
+                          color: Color.fromARGB(255, 225, 225, 225),
+                          width: 2,
+                        ),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                     ),
-      filled: true,
-      fillColor: Colors.white,
-      hintText: "Confirm Your Password",
-      hintStyle: const TextStyle(
-        color: Colors.grey,
-        fontWeight: FontWeight.w300,
-        fontSize: 14, 
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderSide: const BorderSide(
-          color: Color.fromARGB(255, 225, 225, 225),
-          width: 1,
-        ),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderSide: const BorderSide(color: Color.fromARGB(255, 225, 225, 225), width: 2),
-        borderRadius: BorderRadius.circular(10),
-      ),
-    ),
-                    validator:
-                        (value) =>
-                            value!.length < 6 ? "Min 6 characters" : null,
+                    validator: (value) =>
+                        value!.length < 6 ? "Min 6 characters" : null,
                   ),
                   const SizedBox(height: 30),
 
                   // Register Button
                   Center(
                     child: GestureDetector(
-                      onTap: () async {
-                       
-                      },
+                      onTap: () async {},
                       child: GestureDetector(
-                        onTap: () async{
-                          await _authservice.signup(name: _userNameController.text, phonenumber: _userPhonenumberController.text, email: _userEmailController.text, password: _userPasswordController.text);
+                        onTap: () async {
+                          Usermodel body = Usermodel();
+                          body.name = _tabController.index == 0
+                              ? _userNameController.text
+                              : _vendorNameController.text;
+                          body.address = _tabController.index == 0
+                              ? null
+                              : _vendorAddresController.text;
+                          body.number = _tabController.index == 0
+                              ? _userPhonenumberController.text
+                              : _vendorPhonenumberController.text;
+                          body.email = _tabController.index == 0
+                              ? _userEmailController.text
+                              : _vendorEmailController.text;
+                          body.role = _tabController.index == 0
+                              ? "user"
+                              : "vendor";
+
+                          await _authservice.signup(
+                            data: body,
+                            password: _userPasswordController.text,
+                          );
                           Navigator.pop(context);
                         },
                         child: Container(
                           height: 50,
                           width: 350,
                           decoration: BoxDecoration(
-                            color:  Colors.lightBlue,
+                            color: Colors.lightBlue,
                             borderRadius: BorderRadius.circular(15),
                           ),
                           child: const Center(
@@ -369,20 +412,8 @@ final TextEditingController _vendorPhonenumberController = TextEditingController
                   TextFormField(
                     controller: _vendorNameController,
                     decoration: _inputDecoration("Enter Ventor name"),
-                    validator:
-                        (value) => value!.isEmpty ? "Enter your name" : null,
-                  ),
-                  const SizedBox(height: 15),
-
-                  const Text(
-                    "Name of Bussiness",
-                    style: TextStyle(fontWeight: FontWeight.w400),
-                  ),
-                  const SizedBox(height: 5),
-                  TextFormField(
-                    controller: _vendorBussinessnameController,
-                    decoration: _inputDecoration("Enter your Bussiness "),
-                  
+                    validator: (value) =>
+                        value!.isEmpty ? "Enter your name" : null,
                   ),
                   const SizedBox(height: 15),
 
@@ -394,25 +425,10 @@ final TextEditingController _vendorPhonenumberController = TextEditingController
                   TextFormField(
                     controller: _vendorAddresController,
                     decoration: _inputDecoration("Enter Your Address"),
-                       validator:
-                        (value) => value!.isEmpty ? "Enter your address" : null,
+                    validator: (value) =>
+                        value!.isEmpty ? "Enter your address" : null,
                   ),
-                 
-                  const SizedBox(height: 15),
 
-                  const Text(
-                    "City",
-                    style: TextStyle(fontWeight: FontWeight.w400),
-                  ),
-                  const SizedBox(height: 5),
-                  TextFormField(
-                    controller: _vendorCityController,
-                    decoration: _inputDecoration("Enter your City"),
-                     validator:
-                        (value) =>
-                            value!.isEmpty ? "Enter your location" : null,
-                  
-                  ),
                   const SizedBox(height: 15),
 
                   const Text(
@@ -422,11 +438,10 @@ final TextEditingController _vendorPhonenumberController = TextEditingController
                   const SizedBox(height: 5),
                   TextFormField(
                     controller: _vendorEmailController,
-                    obscureText: true,
+
                     decoration: _inputDecoration("Enter your Email"),
-                    validator:
-                        (value) => value!.isEmpty ? "Enter your email" : null,
-                   
+                    validator: (value) =>
+                        value!.isEmpty ? "Enter your email" : null,
                   ),
                   const SizedBox(height: 15),
                   const Text(
@@ -434,42 +449,47 @@ final TextEditingController _vendorPhonenumberController = TextEditingController
                     style: TextStyle(fontWeight: FontWeight.w400),
                   ),
                   const SizedBox(height: 5),
-                 TextFormField(  
+                  TextFormField(
                     obscureText: obscurePassword,
                     controller: _vendorPasswordController,
-                    decoration:InputDecoration(
-                     suffixIcon: IconButton(
-                      icon: Icon(
-                          obscurePassword ? Icons.visibility_off : Icons.visibility),
-                      onPressed: () {
-                        setState(() {
-                          obscurePassword = !obscurePassword;
-                        });
-                      },
+                    decoration: InputDecoration(
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          obscurePassword
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            obscurePassword = !obscurePassword;
+                          });
+                        },
+                      ),
+                      filled: true,
+                      fillColor: Colors.white,
+                      hintText: "Enter Your Password",
+                      hintStyle: const TextStyle(
+                        color: Colors.grey,
+                        fontWeight: FontWeight.w300,
+                        fontSize: 14,
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(
+                          color: Color.fromARGB(255, 225, 225, 225),
+                          width: 1,
+                        ),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(
+                          color: Color.fromARGB(255, 225, 225, 225),
+                          width: 2,
+                        ),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                     ),
-      filled: true,
-      fillColor: Colors.white,
-      hintText: "Enter Your Password",
-      hintStyle: const TextStyle(
-        color: Colors.grey,
-        fontWeight: FontWeight.w300,
-        fontSize: 14, 
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderSide: const BorderSide(
-          color: Color.fromARGB(255, 225, 225, 225),
-          width: 1,
-        ),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderSide: const BorderSide(color: Color.fromARGB(255, 225, 225, 225), width: 2),
-        borderRadius: BorderRadius.circular(10),
-      ),
-    ),
-                    validator:
-                        (value) =>
-                            value!.length < 6 ? "Min 6 characters" : null,
+                    validator: (value) =>
+                        value!.length < 6 ? "Min 6 characters" : null,
                   ),
                   const SizedBox(height: 15),
 
@@ -478,9 +498,8 @@ final TextEditingController _vendorPhonenumberController = TextEditingController
                     style: TextStyle(fontWeight: FontWeight.w400),
                   ),
                   const SizedBox(height: 5),
-                 Container(
+                  Container(
                     decoration: BoxDecoration(
-                      
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(8),
                       boxShadow: [
@@ -538,7 +557,6 @@ final TextEditingController _vendorPhonenumberController = TextEditingController
                             controller: _vendorPhonenumberController,
                             keyboardType: TextInputType.phone,
                             decoration: InputDecoration(
-                             
                               hintText: 'Phone Number',
                               border: InputBorder.none,
                               contentPadding: EdgeInsets.symmetric(
@@ -568,26 +586,42 @@ final TextEditingController _vendorPhonenumberController = TextEditingController
                   Center(
                     child: GestureDetector(
                       onTap: () async {
-                        
+                        Usermodel body = Usermodel();
+                        body.name = _tabController.index == 0
+                            ? _userNameController.text
+                            : _vendorNameController.text;
+                        body.address = _tabController.index == 0
+                            ? null
+                            : _vendorAddresController.text;
+                        body.number = _tabController.index == 0
+                            ? _userPhonenumberController.text
+                            : _vendorPhonenumberController.text;
+                        body.email = _tabController.index == 0
+                            ? _userEmailController.text
+                            : _vendorEmailController.text;
+                        body.role = _tabController.index == 0
+                            ? "user"
+                            : "vendor";
+
+                        await _authservice.signup(
+                          data: body,
+                          password: _vendorPasswordController.text,
+                        );
+                        Navigator.pop(context);
                       },
-                      child: GestureDetector(
-                        onTap: () {
-                          Navigator.pop(context);
-                        },
-                        child: Container(
-                          height: 50,
-                          width: 350,
-                          decoration: BoxDecoration(
-                            color:  Colors.lightBlue,
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          child: const Center(
-                            child: Text(
-                              "Registor as vendor",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
+                      child: Container(
+                        height: 50,
+                        width: 350,
+                        decoration: BoxDecoration(
+                          color: Colors.lightBlue,
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        child: const Center(
+                          child: Text(
+                            "Registor as vendor",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
                             ),
                           ),
                         ),

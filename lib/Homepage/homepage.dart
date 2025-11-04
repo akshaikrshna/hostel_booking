@@ -1,4 +1,10 @@
+import 'dart:developer';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:hostel_booking/Globel/globel.dart';
+import 'package:hostel_booking/Model/hostelmodel.dart';
 import 'package:hostel_booking/Productpage/productpage.dart';
 
 class Homepage extends StatefulWidget {
@@ -23,54 +29,70 @@ class _HomepageState extends State<Homepage> {
                 children: [
                   Row(
                     children: [
-                      const CircleAvatar(
-                        radius: 22,
+                      CircleAvatar(
+                        radius: 22.r,
                         backgroundColor: Colors.black12,
                         child: Icon(Icons.person, color: Colors.black),
                       ),
-                      SizedBox(
-                        width: 5,
-                      ),
-                      Column(crossAxisAlignment: CrossAxisAlignment.start,
+                      SizedBox(width: 5.w),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text("AKSHAY",style: TextStyle(
-                            fontSize: 17,
-                            fontWeight: FontWeight.bold
-                          ),),
+                          Text(
+                            "AKSHAY",
+                            style: TextStyle(
+                              fontSize: 17.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                           Row(
                             children: [
-                              Icon(Icons.location_on,size: 13,color: const Color.fromARGB(255, 199, 117, 23)),
-                              Text("Choose Your Location",style: TextStyle(
-                                fontSize: 13,color: const Color.fromARGB(255, 199, 117, 23)
-                              ),),
+                              Icon(
+                                Icons.location_on,
+                                size: 13.sp,
+                                color: const Color.fromARGB(255, 199, 117, 23),
+                              ),
+                              Text(
+                                "Choose Your Location",
+                                style: TextStyle(
+                                  fontSize: 13.sp,
+                                  color: const Color.fromARGB(
+                                    255,
+                                    199,
+                                    117,
+                                    23,
+                                  ),
+                                ),
+                              ),
                             ],
-                          )
+                          ),
                         ],
-                      )
+                      ),
                     ],
                   ),
                 ],
               ),
-              
-              const SizedBox(height: 20),
-              const Text(
-                "Find Perfect Local Hosts in the Area",
+
+              SizedBox(height: 20.h),
+              Text(
+                "Find Perfect Local Hostels in the Area",
                 style: TextStyle(
-                  fontSize: 22,
+                  fontSize: 22.sp,
                   fontWeight: FontWeight.bold,
-                  height: 1.3,
+                  height: 1.3.h,
                 ),
-              ),const SizedBox(height: 20),
+              ),
+              SizedBox(height: 20.h),
               TextFormField(
                 decoration: InputDecoration(
                   prefixIcon: Icon(Icons.search_rounded),
                   hintText: "Search",
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15)
-                  )
+                    borderRadius: BorderRadius.circular(15.r),
+                  ),
                 ),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16.h),
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
@@ -82,34 +104,137 @@ class _HomepageState extends State<Homepage> {
                   ],
                 ),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16.h),
+
               Expanded(
-                child: ListView(
-                  children: [
-                    _buildPropertyCard(
-                      context,
-                      imageUrl:
-                          "https://ik.imagekit.io/bbhed67kj/wp-content/uploads/2022/10/Luxury-Sakleshpur-Homestay-Near-Waterfalls-3-500x300.jpg",
-                      price: "\$220/day",
-                      rating: "4.7",
-                      title: "Fun loving family",
-                      location: "1 km away, New York",
-                    ),
-                    _buildPropertyCard(
-                      context,
-                      imageUrl:
-                          "https://d2rdhxfof4qmbb.cloudfront.net/wp-content/uploads/20201116185103/Srinikethana-Homestay.jpg",
-                      price: "\$16/day",
-                      rating: "4.5",
-                      title: "A small family in a big house",
-                      location: "3 km away, New York",
-                    ),
-                  ],
+                child: StreamBuilder<QuerySnapshot>(
+                  stream: FirebaseFirestore.instance
+                      .collection('Hostels')
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+
+                    if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                      return const Center(child: Text("No hostels found"));
+                    }
+
+                    final docs = snapshot.data!.docs;
+
+                    // 🔹 Convert each Firestore document to a Map
+                   final List<Hostelmodel> hostels = docs
+    .map((doc) => Hostelmodel.fromJson(doc.data() as Map<String, dynamic>))
+    .toList();
+                    // 🔹 (Optional) Log or print data
+                    for (var hostel in hostels) {
+                      log(hostel.toString()); // or print(hostel)
+                    }
+                    return ListView.builder(
+                      itemCount: hostels.length,
+                      itemBuilder: (context, index) {
+                        final doc = hostels[index];
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => Prodectpage(
+                                  imageUrl: doc.imageUrl,
+                                  price: doc.price,
+                                ),
+                              ),
+                            );
+                          },
+                          child: Card(
+                            margin: EdgeInsets.only(bottom: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16.r),
+                            ),
+                            clipBehavior: Clip.antiAlias,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Image.network(
+                                  doc.imageUrl??'',
+                                  height: 180.h,
+                                  width: double.infinity,
+                                  fit: BoxFit.cover,
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.all(12),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            doc.price??'',
+                                            style: TextStyle(
+                                              fontSize: 18.sp,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.lightBlue,
+                                            ),
+                                          ),
+                                          Row(
+                                            children: [
+                                              Icon(
+                                                Icons.star,
+                                                color: Colors.red,
+                                                size: 18.sp,
+                                              ),
+                                              Text(
+                                                "4",
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 14.sp,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(height: 6.h),
+                                      Text(
+                                        doc.hostelName??'',
+                                        style: TextStyle(
+                                          fontSize: 16.sp,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      SizedBox(height: 4.h),
+                                      Row(
+                                        children: [
+                                          Icon(
+                                            Icons.location_on,
+                                            size: 16.sp,
+                                            color: Colors.grey,
+                                          ),
+                                          SizedBox(width: 4.w),
+                                          Text(
+                                            doc.location??'',
+                                            style: TextStyle(
+                                              color: Colors.grey,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  },
                 ),
               ),
             ],
-
-
           ),
         ),
       ),
@@ -118,28 +243,30 @@ class _HomepageState extends State<Homepage> {
 
   Widget _buildCategory(String title, bool selected) {
     return Container(
-      margin: const EdgeInsets.only(right: 12),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      margin: EdgeInsets.only(right: 12),
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
         color: selected ? Colors.lightBlue.shade100 : Colors.grey.shade200,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(20.r),
       ),
       child: Text(
         title,
         style: TextStyle(
-          color: selected ? Colors.lightBlue: Colors.black87,
+          color: selected ? Colors.lightBlue : Colors.black87,
           fontWeight: FontWeight.w600,
         ),
       ),
     );
   }
 
-  Widget _buildPropertyCard(BuildContext context,
-      {required String imageUrl,
-      required String price,
-      required String rating,
-      required String title,
-      required String location}) {
+  Widget _buildPropertyCard(
+    BuildContext context, {
+    required String imageUrl,
+    required String price,
+    required String rating,
+    required String title,
+    required String location,
+  }) {
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -148,51 +275,66 @@ class _HomepageState extends State<Homepage> {
         );
       },
       child: Card(
-        margin: const EdgeInsets.only(bottom: 16),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        margin: EdgeInsets.only(bottom: 16),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.r),
+        ),
         clipBehavior: Clip.antiAlias,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Image.network(imageUrl,
-                height: 180, width: double.infinity, fit: BoxFit.cover),
+            Image.network(
+              imageUrl,
+              height: 180.h,
+              width: double.infinity,
+              fit: BoxFit.cover,
+            ),
             Padding(
-              padding: const EdgeInsets.all(12),
+              padding: EdgeInsets.all(12),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(price,
-                          style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.lightBlue,)),
+                      Text(
+                        price,
+                        style: TextStyle(
+                          fontSize: 18.sp,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.lightBlue,
+                        ),
+                      ),
                       Row(
                         children: [
-                          const Icon(Icons.star, color: Colors.red, size: 18),
-                          Text(rating,
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.w600, fontSize: 14)),
+                          Icon(Icons.star, color: Colors.red, size: 18),
+                          Text(
+                            rating,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14.sp,
+                            ),
+                          ),
                         ],
                       ),
                     ],
                   ),
-                  const SizedBox(height: 6),
-                  Text(title,
-                      style: const TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 4),
+                  SizedBox(height: 6.h),
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 4.h),
                   Row(
                     children: [
-                      const Icon(Icons.location_on,
-                          size: 16, color: Colors.grey),
-                      const SizedBox(width: 4),
-                      Text(location,
-                          style: const TextStyle(color: Colors.grey)),
+                      Icon(Icons.location_on, size: 16.sp, color: Colors.grey),
+                      SizedBox(width: 4.w),
+                      Text(location, style: TextStyle(color: Colors.grey)),
                     ],
-                  )
+                  ),
                 ],
               ),
             ),
