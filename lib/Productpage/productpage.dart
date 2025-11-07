@@ -3,7 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hostel_booking/BookNow/booknow.dart';
 import 'package:hostel_booking/Bookingpage/bookingbage.dart';
 import 'package:hostel_booking/Globel/globel.dart';
-import 'package:hostel_booking/LocationPicker/location_picker.dart';
 
 class Prodectpage extends StatefulWidget {
   final String? imageUrl;
@@ -140,7 +139,7 @@ class _ProdectpageState extends State<Prodectpage> {
         
                             GestureDetector(
                               onTap: () {
-                                Navigator.push(context, MaterialPageRoute(builder: (context) => LocationPickerPage(),));
+
                               },
                               child: Container(
                                 height: 199.h,
@@ -218,11 +217,16 @@ class _ProdectpageState extends State<Prodectpage> {
                                  BoxDecoration( color: Colors.lightBlue,
                                   borderRadius: BorderRadius.circular(20.r)
                                  ),
-                                 child: Center(child: Text("Book Now",style: TextStyle(
-                                  fontSize: 27.sp,
-                                  fontWeight: FontWeight.bold,
-                                  color: const Color.fromARGB(255, 245, 240, 240)
-                                 ),)),
+                                 child: GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(context,MaterialPageRoute(builder:(context) => Bookingpage(),));
+                                  },
+                                   child: Center(child: Text("Book Now",style: TextStyle(
+                                    fontSize: 27.sp,
+                                    fontWeight: FontWeight.bold,
+                                    color: const Color.fromARGB(255, 245, 240, 240)
+                                   ),)),
+                                 ),
                                 ),
                               ),
                             ),

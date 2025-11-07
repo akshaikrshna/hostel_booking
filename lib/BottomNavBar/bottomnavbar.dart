@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hostel_booking/Bookingpage/bookingbage.dart';
+import 'package:hostel_booking/Bookingpage/bookinglist_screen.dart';
 import 'package:hostel_booking/Favorites/favorites.dart';
 import 'package:hostel_booking/Homepage/homepage.dart';
 import 'package:hostel_booking/Profile/profile.dart';
@@ -32,7 +33,7 @@ class _BottombavState extends State<Bottombav> {
     bookings = const Bookingpage();
     fav = const Favorites();
     profile = const Profile();
-    pages = [homepage, bookings, fav, profile];
+    pages = [homepage, BookingHistoryScreen(), fav, profile];
   }
 
   @override
