@@ -5,6 +5,7 @@ import 'package:hostel_booking/Auth/authservice.dart';
 import 'package:hostel_booking/BottomNavBar/bottomnavbar.dart';
 import 'package:hostel_booking/Homepage/homepage.dart';
 import 'package:hostel_booking/Signup/signuppage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Loginpage extends StatefulWidget {
   const Loginpage({super.key});
@@ -128,6 +129,7 @@ class _LoginpageState extends State<Loginpage> {
                       ),
                       onPressed: () async {
                         if (_formkey.currentState!.validate()) {
+                            final prefs = await SharedPreferences.getInstance();
                           String? result = await _authservice.login(
                             context: context,
                             email: _emailController.text,

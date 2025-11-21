@@ -11,69 +11,75 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
   String searchQuery = '';
   String statusFilter = 'all';
   
-  final List<Booking> bookings = [
-    Booking(
-      id: 'BK-2024-001',
-      patientName: 'John Doe',
-      department: 'Cardiology',
-      doctor: 'Dr. Sarah Johnson',
-      date: '2024-11-05',
-      time: '10:00 AM',
-      status: BookingStatus.completed,
-      type: 'Consultation',
-      location: 'Building A, Floor 2',
-    ),
-    Booking(
-      id: 'BK-2024-002',
-      patientName: 'Jane Smith',
-      department: 'Orthopedics',
-      doctor: 'Dr. Michael Chen',
-      date: '2024-11-06',
-      time: '02:30 PM',
+  final List<HostelBooking> bookings = [
+    HostelBooking(
+      id: 'HST-2024-001',
+      guestName: 'John Doe',
+      hostelName: 'Sunrise Hostel',
+      roomType: 'Deluxe Room',
+      checkInDate: '2024-11-15',
+      checkOutDate: '2024-11-20',
       status: BookingStatus.confirmed,
-      type: 'Follow-up',
-      location: 'Building B, Floor 1',
+      totalAmount: '₹5,000',
+      location: 'Perintalmanna, Kerala',
+      guests: 2,
     ),
-    Booking(
-      id: 'BK-2024-003',
-      patientName: 'Robert Wilson',
-      department: 'Neurology',
-      doctor: 'Dr. Emily Brown',
-      date: '2024-11-04',
-      time: '11:15 AM',
-      status: BookingStatus.cancelled,
-      type: 'Consultation',
-      location: 'Building A, Floor 3',
-    ),
-    Booking(
-      id: 'BK-2024-004',
-      patientName: 'Maria Garcia',
-      department: 'Pediatrics',
-      doctor: 'Dr. James Wilson',
-      date: '2024-11-07',
-      time: '09:00 AM',
-      status: BookingStatus.pending,
-      type: 'Vaccination',
-      location: 'Building C, Floor 1',
-    ),
-    Booking(
-      id: 'BK-2024-005',
-      patientName: 'David Lee',
-      department: 'Dermatology',
-      doctor: 'Dr. Lisa Anderson',
-      date: '2024-11-03',
-      time: '03:45 PM',
+    HostelBooking(
+      id: 'HST-2024-002',
+      guestName: 'Jane Smith',
+      hostelName: 'Mountain View Hostel',
+      roomType: 'Standard Room',
+      checkInDate: '2024-11-10',
+      checkOutDate: '2024-11-12',
       status: BookingStatus.completed,
-      type: 'Consultation',
-      location: 'Building B, Floor 2',
+      totalAmount: '₹3,500',
+      location: 'Malappuram, Kerala',
+      guests: 1,
+    ),
+    HostelBooking(
+      id: 'HST-2024-003',
+      guestName: 'Robert Wilson',
+      hostelName: 'City Center Hostel',
+      roomType: 'Shared Dormitory',
+      checkInDate: '2024-11-08',
+      checkOutDate: '2024-11-10',
+      status: BookingStatus.cancelled,
+      totalAmount: '₹1,500',
+      location: 'Calicut, Kerala',
+      guests: 1,
+    ),
+    HostelBooking(
+      id: 'HST-2024-004',
+      guestName: 'Maria Garcia',
+      hostelName: 'Beach Side Hostel',
+      roomType: 'Private Room',
+      checkInDate: '2024-11-18',
+      checkOutDate: '2024-11-22',
+      status: BookingStatus.pending,
+      totalAmount: '₹6,800',
+      location: 'Kozhikode, Kerala',
+      guests: 3,
+    ),
+    HostelBooking(
+      id: 'HST-2024-005',
+      guestName: 'David Lee',
+      hostelName: 'Green Valley Hostel',
+      roomType: 'Premium Suite',
+      checkInDate: '2024-11-05',
+      checkOutDate: '2024-11-07',
+      status: BookingStatus.completed,
+      totalAmount: '₹4,200',
+      location: 'Manjeri, Kerala',
+      guests: 2,
     ),
   ];
 
-  List<Booking> get filteredBookings {
+  List<HostelBooking> get filteredBookings {
     return bookings.where((booking) {
-      final matchesSearch = booking.patientName.toLowerCase().contains(searchQuery.toLowerCase()) ||
-          booking.doctor.toLowerCase().contains(searchQuery.toLowerCase()) ||
-          booking.department.toLowerCase().contains(searchQuery.toLowerCase()) ||
+      final matchesSearch = booking.guestName.toLowerCase().contains(searchQuery.toLowerCase()) ||
+          booking.hostelName.toLowerCase().contains(searchQuery.toLowerCase()) ||
+          booking.roomType.toLowerCase().contains(searchQuery.toLowerCase()) ||
+          booking.location.toLowerCase().contains(searchQuery.toLowerCase()) ||
           booking.id.toLowerCase().contains(searchQuery.toLowerCase());
       
       final matchesStatus = statusFilter == 'all' || 
@@ -86,10 +92,10 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
-        title: const Text('Booking History'),
-        backgroundColor: Colors.blue[700],
+        title: const Text('My Bookings'),
+        backgroundColor: const Color(0xffFEAA61),
         elevation: 0,
       ),
       body: Column(
@@ -113,7 +119,7 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
                 // Search Bar
                 TextField(
                   decoration: InputDecoration(
-                    hintText: 'Search by patient, doctor, department...',
+                    hintText: 'Search by guest, hostel, location...',
                     prefixIcon: const Icon(Icons.search),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -125,7 +131,7 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: Colors.blue[700]!, width: 2),
+                      borderSide: const BorderSide(color: Color(0xFF4facfe), width: 2),
                     ),
                     filled: true,
                     fillColor: Colors.grey[50],
@@ -212,7 +218,7 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     itemCount: filteredBookings.length,
                     itemBuilder: (context, index) {
-                      return BookingCard(booking: filteredBookings[index]);
+                      return HostelBookingCard(booking: filteredBookings[index]);
                     },
                   ),
           ),
@@ -222,10 +228,10 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
   }
 }
 
-class BookingCard extends StatelessWidget {
-  final Booking booking;
+class HostelBookingCard extends StatelessWidget {
+  final HostelBooking booking;
 
-  const BookingCard({Key? key, required this.booking}) : super(key: key);
+  const HostelBookingCard({Key? key, required this.booking}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -247,7 +253,7 @@ class BookingCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        booking.patientName,
+                        booking.hostelName,
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -270,13 +276,48 @@ class BookingCard extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             // Details
-            _buildInfoRow(Icons.person, booking.doctor, booking.department),
+            _buildInfoRow(Icons.person, 'Guest:', booking.guestName),
             const SizedBox(height: 8),
-            _buildInfoRow(Icons.calendar_today, booking.date, booking.time),
+            _buildInfoRow(Icons.bed, 'Room:', booking.roomType),
             const SizedBox(height: 8),
-            _buildInfoRow(Icons.location_on, booking.location, null),
+            _buildInfoRow(
+              Icons.calendar_today, 
+              'Check-in:', 
+              '${booking.checkInDate} → ${booking.checkOutDate}'
+            ),
             const SizedBox(height: 8),
-            _buildInfoRow(Icons.medical_services, booking.type, null),
+            _buildInfoRow(Icons.location_on, 'Location:', booking.location),
+            const SizedBox(height: 8),
+            _buildInfoRow(Icons.group, 'Guests:', '${booking.guests} person(s)'),
+            const SizedBox(height: 12),
+            // Total Amount
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: const Color(0xFF4facfe).withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Total Amount:',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    booking.totalAmount,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF4facfe),
+                    ),
+                  ),
+                ],
+              ),
+            ),
             const SizedBox(height: 16),
             // Actions
             Row(
@@ -285,10 +326,10 @@ class BookingCard extends StatelessWidget {
                   child: OutlinedButton.icon(
                     onPressed: () {},
                     icon: const Icon(Icons.visibility, size: 18),
-                    label: const Text('View'),
+                    label: const Text('View Details'),
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: Colors.blue[700],
-                      side: BorderSide(color: Colors.blue[700]!),
+                      foregroundColor: const Color(0xFF4facfe),
+                      side: const BorderSide(color: Color(0xFF4facfe)),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
@@ -318,15 +359,23 @@ class BookingCard extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoRow(IconData icon, String primary, String? secondary) {
+  Widget _buildInfoRow(IconData icon, String label, String value) {
     return Row(
       children: [
-        Icon(icon, size: 18, color: Colors.blue[700]),
+        Icon(icon, size: 18, color: const Color(0xFF4facfe)),
         const SizedBox(width: 8),
         Expanded(
-          child: Text(
-            secondary != null ? '$primary • $secondary' : primary,
-            style: const TextStyle(fontSize: 14, color: Colors.black87),
+          child: RichText(
+            text: TextSpan(
+              style: const TextStyle(fontSize: 14, color: Colors.black87),
+              children: [
+                TextSpan(
+                  text: '$label ',
+                  style: const TextStyle(fontWeight: FontWeight.w600),
+                ),
+                TextSpan(text: value),
+              ],
+            ),
           ),
         ),
       ],
@@ -383,26 +432,28 @@ class BookingCard extends StatelessWidget {
 // Models
 enum BookingStatus { completed, confirmed, pending, cancelled }
 
-class Booking {
+class HostelBooking {
   final String id;
-  final String patientName;
-  final String department;
-  final String doctor;
-  final String date;
-  final String time;
+  final String guestName;
+  final String hostelName;
+  final String roomType;
+  final String checkInDate;
+  final String checkOutDate;
   final BookingStatus status;
-  final String type;
+  final String totalAmount;
   final String location;
+  final int guests;
 
-  Booking({
+  HostelBooking({
     required this.id,
-    required this.patientName,
-    required this.department,
-    required this.doctor,
-    required this.date,
-    required this.time,
+    required this.guestName,
+    required this.hostelName,
+    required this.roomType,
+    required this.checkInDate,
+    required this.checkOutDate,
     required this.status,
-    required this.type,
+    required this.totalAmount,
     required this.location,
+    required this.guests,
   });
 }

@@ -1,7 +1,12 @@
-import 'dart:async';
+// ignore_for_file: use_build_context_synchronously
 
+import 'dart:async';
+import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:hostel_booking/BottomNavBar/bottomnavbar.dart';
 import 'package:hostel_booking/Login/loginpage.dart';
+import 'package:hostel_booking/admin/bottomnav.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Splashpage extends StatefulWidget {
   const Splashpage({super.key});
@@ -14,23 +19,52 @@ class _SplashpageState extends State<Splashpage> {
   @override
   void initState() {
     super.initState();
-    Timer(Duration(seconds: 3),() {
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Loginpage(),));
-    });
+    Future.delayed(const Duration(seconds: 3), _navigateAfterSplash);
   }
+
+  Future<void> _navigateAfterSplash() async {
+    final prefs = await SharedPreferences.getInstance();
+    String? userId = prefs.getString("uid");
+    String? role = prefs.getString("role");
+    try {
+      if (userId != null && userId.isNotEmpty) {
+        if (role == "user") {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const ModernNavBar()),
+          );
+        } else if (role == "vendor") {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const Bottomnav()),
+          );
+        } else {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const Loginpage()),
+          );
+        }
+      } else {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const Loginpage()),
+        );
+      }
+    } catch (e) {
+      log(e.toString());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
-        body: Center(
-          child: Column(mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.house,size: 90,color: Colors.lightBlue,),
-            Text("Where Is My Hostel",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 22),)
-            ],
-            
-          ),
+      backgroundColor: Colors.white,
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [Image.asset("assets/images/logo.png")],
         ),
+      ),
     );
   }
 }

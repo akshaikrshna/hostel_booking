@@ -80,19 +80,7 @@ class _RegisterPageState extends State<RegisterPage>
         borderRadius: BorderRadius.circular(10),
       ),
     );
-  }
-
-  // void _registerUser() {
-  //   if (_userFormKey.currentState!.validate()) {
-  //     print("User registered: ${_userNameController.text}");
-  //   }
-  // }
-
-  // void _registerOwner() {
-  //   if (_ownerFormKey.currentState!.validate()) {
-  //     print("Owner registered: ${_ownerNameController.text}");
-  //   }
-  // }
+  }     
 
   @override
   Widget build(BuildContext context) {
@@ -132,6 +120,9 @@ class _RegisterPageState extends State<RegisterPage>
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+
+
+                  
                   const Text(
                     "Full Name",
                     style: TextStyle(fontWeight: FontWeight.w400),

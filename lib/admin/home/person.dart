@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:hostel_booking/Auth/authservice.dart';
 import 'package:hostel_booking/Login/loginpage.dart';
 import 'package:hostel_booking/admin/home/addhostel.dart';
 
@@ -16,6 +17,7 @@ class _PersonState extends State<Person> {
   
   @override
   Widget build(BuildContext context) {
+    final _authservice =AuthService();
     return Scaffold(
       appBar: AppBar(
         title: Center(child: Text("Profile",style: TextStyle(fontSize: 26.sp,fontWeight: FontWeight.w500),)),
@@ -101,8 +103,8 @@ class _PersonState extends State<Person> {
                   padding: const EdgeInsets.only(right:20),
                   child: GestureDetector(
                   onTap: () async{
-                    await FirebaseAuth.instance.signOut();
-                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Loginpage(),));
+                    await _authservice.signout(context);
+                    
                   },
                     child: Row(mainAxisAlignment: MainAxisAlignment.end,
                       children: [

@@ -4,93 +4,132 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:hostel_booking/BottomNavBar/bottomnavbar.dart';
 import 'package:hostel_booking/Homepage/homepage.dart';
+import 'package:hostel_booking/Login/loginpage.dart';
 import 'package:hostel_booking/Model/usermodel.dart';
 import 'package:hostel_booking/admin/bottomnav.dart';
-
+import 'package:hostel_booking/utils/helper/snackbar_helper.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
+  final _auth = FirebaseAuth.instance;
+  final _firestore = FirebaseFirestore.instance;
 
-final _auth=FirebaseAuth.instance;
-final _firestore=FirebaseFirestore.instance;
 
 
-  Future<String>signup({
-   required Usermodel data,
+  Future<String> signup({
+    required Usermodel data,
     required String password,
-  }) async{
-  String res="some error occurs";
-  if(data.email!.isNotEmpty && password.isNotEmpty){
-    UserCredential credential= await _auth.createUserWithEmailAndPassword(email: data.email ?? 'N/A', password: password);
-    await _firestore.collection("User").doc(credential.user!.uid).set({
-      'name':data.name,
-      'phonenumber':data.number,
-      "role":data.role,
-      "address":data.address,
-      'uid':credential.user!.uid,
-      'email':data.email,
-    });
-    res ="success";
-  }else{
-      res='please fill all the fields';
+  }) async {
+    String res = "some error occurs";
+    if (data.email!.isNotEmpty && password.isNotEmpty) {
+      UserCredential credential = await _auth.createUserWithEmailAndPassword(
+        email: data.email ?? 'N/A',
+        password: password,
+      );
+      await _firestore.collection("User").doc(credential.user!.uid).set({
+        'name': data.name,
+        'phonenumber': data.number,
+        "role": data.role,
+        "address": data.address,
+        'uid': credential.user!.uid,
+        'email': data.email,
+      });
+      res = "success";
+      
+    } else {
+      res = 'please fill all the fields';
+    }
+    try {} catch (err) {
+      return err.toString();
+    }
+    return res;
   }
-  try{}catch(err){
-    return err.toString();
 
+  Future<String?> login({
+    required String email,
+    required String password,
+    required BuildContext context,
+  }) async {
+    try {
+      UserCredential _usercredential = await _auth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      
+      User? user = _usercredential.user;
+
+
+     String uid = user!.uid;
+    
+
+     DocumentSnapshot snapshot =
+      await FirebaseFirestore.instance.collection('User').doc(uid).get();
+
+      if (snapshot.exists) {
+     snapshot.data() as Map<String, dynamic>;
+  } else {
+    showStatusSnackBar(context, "login successfull", SnackbarStatus.success);
   }
-  return res;
-}
-
-
-
-
-
- Future<String?> login({
-
-
-
-  required String email,
-  required String password,
- required BuildContext context
-}) async {
-  try {
-    UserCredential _usercredential = await _auth.signInWithEmailAndPassword(email: email, password: password);
-    User? user = _usercredential.user;
-
-      if(user!=null){
-
-
-
-        
-      DocumentSnapshot userdoc= await _firestore.collection("User").doc(user.uid).get();
-       if (userdoc.exists) {
+     
+     final prefs = await SharedPreferences.getInstance();
+     
+    
+     
+      if (user != null) {
+        DocumentSnapshot userdoc = await _firestore
+            .collection("User")
+            .doc(user.uid)
+            .get();
+        if (userdoc.exists) {
           Map<String, dynamic> userdata =
               userdoc.data() as Map<String, dynamic>;
           String role = userdata['role'];
+          await prefs.setString("uid", uid);
+         await prefs.setString("role",role);
 
-        if(role == 'user'){
-          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) =>Bottombav(),), (route) => false,);
-        }else{
-          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => Bottomnav(),), (route) => false,);
+          if (role == 'user') {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => ModernNavBar()),
+              (route) => false,
+            );
+          } else {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => Bottomnav()),
+              (route) => false,
+            );
+          }
         }
-       }
       }
-    return "success"; // ✅ Return success message
-  } on FirebaseAuthException catch (e) {
-    // ✅ Handle Firebase-specific errors
-    if (e.code == 'user-not-found') {
-      return 'No user found for that email.';
-    } else if (e.code == 'wrong-password') {
-      return 'Wrong password provided.';
-    } else if (e.code == 'invalid-email') {
-      return 'Invalid email address.';
-    } else if (e.code == 'invalid-credential') {
-      return 'Invalid login credentials.';
-    } else {
-      return 'Login failed. Please try again.';
+      return "success"; // ✅ Return success message
+    } on FirebaseAuthException catch (e) {
+      // ✅ Handle Firebase-specific errors
+      if (e.code == 'user-not-found') {
+        return 'No user found for that email.';
+      } else if (e.code == 'wrong-password') {
+        return 'Wrong password provided.';
+      } else if (e.code == 'invalid-email') {
+        return 'Invalid email address.';
+      } else if (e.code == 'invalid-credential') {
+        return 'Invalid login credentials.';
+      } else {
+        return 'Login failed. Please try again.';
+      }
+    } catch (e) {
+      // ✅ Handle any other unexpected errors
+      return 'An unexpected error occurred. Please try again later.';
     }
-  } catch (e) {
-    // ✅ Handle any other unexpected errors
-    return 'An unexpected error occurred. Please try again later.';
   }
-}
+  Future<void> signout(BuildContext context) async {
+    await FirebaseAuth.instance.signOut();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+    Navigator.pop(context);
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => Loginpage()),
+      (Route<dynamic> route) => false,
+    );
+  }
 }
