@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hostel_booking/Homepage/homepage.dart';
-import 'package:hostel_booking/admin/home/adminpage.dart';
-import 'package:hostel_booking/admin/home/person.dart';
+import 'package:hostel_booking/vendor/home/addhostel.dart';
+import 'package:hostel_booking/vendor/home/adminpage.dart';
+import 'package:hostel_booking/vendor/home/person.dart';
 
 class Bottomnav extends StatefulWidget {
   const Bottomnav({super.key});
@@ -21,7 +22,7 @@ class _BottomnavState extends State<Bottomnav> {
 
   final List<Widget> _pages =[
     
-     Adminpage(),
+     AdminPage( ),
      Person()
      
 

@@ -6,7 +6,7 @@ import 'package:hostel_booking/BottomNavBar/bottomnavbar.dart';
 import 'package:hostel_booking/Homepage/homepage.dart';
 import 'package:hostel_booking/Login/loginpage.dart';
 import 'package:hostel_booking/Model/usermodel.dart';
-import 'package:hostel_booking/admin/bottomnav.dart';
+import 'package:hostel_booking/vendor/bottomnav.dart';
 import 'package:hostel_booking/utils/helper/snackbar_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -125,7 +125,7 @@ class AuthService {
     await FirebaseAuth.instance.signOut();
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear();
-    Navigator.pop(context);
+     if (!context.mounted) return;
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (context) => Loginpage()),

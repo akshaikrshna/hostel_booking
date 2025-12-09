@@ -1,11 +1,11 @@
 import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:hostel_booking/Globel/globel.dart';
 import 'package:hostel_booking/Model/hostelmodel.dart';
 import 'package:hostel_booking/Productpage/productpage.dart';
+import 'package:hostel_booking/functions/functions.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -15,7 +15,28 @@ class Homepage extends StatefulWidget {
 }
 
 class _HomepageState extends State<Homepage> {
-  String selectedCategory = "All";
+  Map<String, dynamic>? userData;
+   List<Map<String,dynamic>>allhostels =[];
+   List<Map<String,dynamic>>fillterdhostel =[];
+
+  String ?selectedCategory;
+
+    final fetchuserdata fetchuser = fetchuserdata();
+
+    void loadUser() async {
+      userData = await fetchuser.getUserData();
+      log("message");
+      setState(() {
+        
+      });
+    }
+    
+    @override
+  void initState() {
+   loadUser();
+    super.initState();  
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +46,6 @@ class _HomepageState extends State<Homepage> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Modern Header with Gradient
           Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -46,7 +66,6 @@ class _HomepageState extends State<Homepage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Profile Section
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -88,7 +107,7 @@ class _HomepageState extends State<Homepage> {
                                 ),
                               ),
                               Text(
-                                "AKSHAY",
+                                "${userData?["name"]??''}",
                                 style: TextStyle(
                                   fontSize: 20.sp,
                                   color: Color(0xff090807),
@@ -127,7 +146,7 @@ class _HomepageState extends State<Homepage> {
                     ),
                   ),
                   Text(
-                    "Local Hostel",
+                    "local Hostel",
                     style: TextStyle(
                       fontSize: 28.sp,
                       fontWeight: FontWeight.bold,
@@ -219,9 +238,9 @@ class _HomepageState extends State<Homepage> {
                   child: Row(
                     children: [
                       _buildCategory("All", "All", Icons.apps),
-                      _buildCategory("House", "House", Icons.house_outlined),
-                      _buildCategory("Apartment", "Apartment", Icons.apartment_outlined),
-                      _buildCategory("Townhouse", "Townhouse", Icons.location_city_outlined),
+                      _buildCategory("Mens", "Mens", Icons.man_outlined),
+                      _buildCategory("Females", "Females", Icons.girl),
+                      _buildCategory("Mixed", "Mixed",Icons.wc_rounded),
                     ],
                   ),
                 ),
@@ -259,13 +278,10 @@ class _HomepageState extends State<Homepage> {
             ),
           ),
           
-          // SizedBox(height: 8.h),
-          
-          // Hostels List
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
-                  .collection('Hostels')
+                  .collection('Hostels').where('status',isEqualTo: 1).where('selectedgenter',isEqualTo: selectedCategory=='All'?null :selectedCategory)
                   .snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -277,7 +293,7 @@ class _HomepageState extends State<Homepage> {
                 }
       
                 if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return Center(
+                     return Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -303,6 +319,9 @@ class _HomepageState extends State<Homepage> {
                 final List<Hostelmodel> hostels = docs
                     .map((doc) => Hostelmodel.fromJson(doc.data() as Map<String, dynamic>))
                     .toList();
+
+                
+                
       
                 for (var hostel in hostels) {
                   log(hostel.toJson().toString());
@@ -451,7 +470,7 @@ class _HomepageState extends State<Homepage> {
                                             SizedBox(width: 4.w),
                                             Expanded(
                                               child: Text(
-                                                doc.location ?? 'Location not specified',
+                                                doc.place ?? 'place not specified',
                                                 style: TextStyle(
                                                   color: Colors.grey[600],
                                                   fontSize: 13.sp,

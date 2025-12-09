@@ -1,150 +1,167 @@
 import 'package:flutter/material.dart';
+import 'package:hostel_booking/main.dart';
+import 'package:hostel_booking/utils/helper/razorpay_service/successpayment.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 
-class Bookingpage extends StatefulWidget {
-  const Bookingpage({super.key});
-
-  @override
-  State<Bookingpage> createState() => _BookingpageState();
-}
-
-class _BookingpageState extends State<Bookingpage> {
+class RazorpayService {
   late Razorpay _razorpay;
+  final Function(PaymentSuccessResponse)? onSuccess;
+  final Function(PaymentFailureResponse)? onError;
+  final Function(ExternalWalletResponse)? onExternalWallet;
+  final BuildContext? context;
 
-  @override
-  void initState() {
-    super.initState();
+  RazorpayService({
+    this.onSuccess,
+    this.onError,
+    this.onExternalWallet,
+    this.context,
+  }) {
+    _initializeRazorpay();
+  }
 
+  void _initializeRazorpay() {
     _razorpay = Razorpay();
-
-    // Listen to Razorpay events
+    
+    // Setup event listeners
     _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
     _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
     _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
   }
 
-  @override
-  void dispose() {
-    _razorpay.clear(); // Always clear to prevent memory leaks
-    super.dispose();
+ void _handlePaymentSuccess(PaymentSuccessResponse response) {
+  debugPrint('Payment Success: ${response.paymentId}');
+
+  // Trigger success callback
+  onSuccess?.call(response);
+
+  // Navigate if context is available
+
+   
+    Navigator.pushReplacement(
+      navigatorKey.currentContext!,
+      MaterialPageRoute(builder: (context) => Successpayment()),
+    );
+
+    _showSnackBar(
+      '✅ Payment Successful\nPayment ID: ${response.paymentId}',
+      Colors.green,
+    );
+
+}
+
+
+  void _handlePaymentError(PaymentFailureResponse response) {
+    debugPrint('Payment Error: ${response.code} - ${response.message}');
+    
+    // Call custom error callback if provided
+    onError?.call(response);
+    
+    // Show snackbar if context is available
+    if (context != null) {
+      _showSnackBar(
+        '❌ Payment Failed\nReason: ${response.message}',
+        Colors.red,
+      );
+    }
   }
 
-  void _openRazorpayCheckout() {
+  void _handleExternalWallet(ExternalWalletResponse response) {
+    debugPrint('External Wallet: ${response.walletName}');
+    
+    // Call custom wallet callback if provided
+    onExternalWallet?.call(response);
+    
+    // Show snackbar if context is available
+    if (context != null) {
+      _showSnackBar(
+        '💼 External Wallet Selected: ${response.walletName}',
+        Colors.blue,
+      );
+    }
+  }
+
+  void _showSnackBar(String message, Color color) {
+    ScaffoldMessenger.of(navigatorKey.currentContext!).showSnackBar(
+      SnackBar(
+        backgroundColor: color,
+        content: Text(
+          message,
+          style: const TextStyle(color: Colors.white),
+        ),
+      ),
+    );
+  }
+
+  // Open Razorpay checkout with basic options
+  void openCheckout({
+    required String key,
+    required int amount,
+    String currency = 'INR',
+    String name = 'Hostaa',
+    String description = 'Payment',
+    Map<String, String>? prefill,
+    Map<String, dynamic>? theme,
+    int timeout = 300,
+  }) {
     var options = {
-      'key': 'rzp_test_dxrCt5ZPpT9H0g', // 🔹 Replace with your Razorpay Key ID
-      'amount': 10000, // ₹100 in paise (100 * 100)
-      'name': 'Hostel Booking App',
-      'description': 'Payment for Hostel',
-      'timeout': 300, // 5 minutes
-      'prefill': {
+      'key': key,
+      'amount': amount,
+      'currency': currency,
+      'name': name,
+      'description': description,
+      'timeout': timeout,
+      'prefill': prefill ?? {
         'contact': '9999999999',
-        'email': 'testuser@example.com',
+        'email': 'user@example.com',
       },
-      'theme': {
-        'color': '#2E7D32' // Custom color for Razorpay UI (green here)
-      }
+      'theme': theme ?? {
+        'color': '#3399cc',
+      },
     };
 
     try {
       _razorpay.open(options);
     } catch (e) {
-      debugPrint('Error: $e');
+      debugPrint('Razorpay Error: $e');
+      
+      if (context != null) {
+        _showSnackBar('Error opening payment gateway', Colors.orange);
+      }
     }
   }
 
-  void _handlePaymentSuccess(PaymentSuccessResponse response) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        backgroundColor: Colors.green,
-        content: Text(
-          '✅ Payment Successful\nPayment ID: ${response.paymentId}',
-          style: const TextStyle(color: Colors.white),
-        ),
-      ),
-    );
+  // Open checkout with order ID (recommended for production)
+  void openCheckoutWithOrder({
+    required String key,
+    required String orderId,
+    required int amount,
+    String currency = 'INR',
+    String name = 'Hostaa',
+    String description = 'Payment',
+    Map<String, String>? prefill,
+    Map<String, dynamic>? theme,
+  }) {
+    var options = {
+      'key': key,
+      'amount': amount,
+      'currency': currency,
+      'name': name,
+      'description': description,
+      'order_id': orderId,
+      'prefill': prefill,
+      'theme': theme,
+    };
+
+    try {
+      _razorpay.open(options);
+    } catch (e) {
+      debugPrint('Razorpay Error: $e');
+    }
   }
 
-  void _handlePaymentError(PaymentFailureResponse response) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        backgroundColor: Colors.red,
-        content: Text(
-          '❌ Payment Failed\nReason: ${response.message}',
-          style: const TextStyle(color: Colors.white),
-        ),
-      ),
-    );
-  }
-
-  void _handleExternalWallet(ExternalWalletResponse response) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        backgroundColor: Colors.blue,
-        content: Text(
-          '💼 External Wallet Selected: ${response.walletName}',
-          style: const TextStyle(color: Colors.white),
-        ),
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey.shade100,
-      appBar: AppBar(
-        title: const Text('Razorpay Payment'),
-        backgroundColor: Colors.green.shade700,
-      ),
-      body: Center(
-        child: Container(
-          padding: const EdgeInsets.all(20),
-          margin: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                blurRadius: 10,
-                color: Colors.black12,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.payment, size: 80, color: Colors.green),
-              const SizedBox(height: 20),
-              const Text(
-                "Proceed to Payment",
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 10),
-              const Text(
-                "Pay ₹100 securely using Razorpay.",
-                style: TextStyle(fontSize: 16, color: Colors.grey),
-              ),
-              const SizedBox(height: 30),
-              ElevatedButton(
-                onPressed: _openRazorpayCheckout,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 60, vertical: 15),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                ),
-                child: const Text(
-                  "Pay Now",
-                  style: TextStyle(fontSize: 20, color: Colors.white),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+  // Cleanup method
+  void dispose() {
+    _razorpay.clear();
+    
   }
 }

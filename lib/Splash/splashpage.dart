@@ -1,11 +1,9 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'dart:async';
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:hostel_booking/BottomNavBar/bottomnavbar.dart';
 import 'package:hostel_booking/Login/loginpage.dart';
-import 'package:hostel_booking/admin/bottomnav.dart';
+import 'package:hostel_booking/vendor/bottomnav.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Splashpage extends StatefulWidget {

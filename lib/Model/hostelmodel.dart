@@ -18,6 +18,7 @@ class Hostelmodel {
   List<String>? imageUrl;
   String? availableBeds;
   String? location;
+  String? place;
   String? discription;
   String? selectedgenter;
   String? selecteddormetry;
@@ -33,6 +34,7 @@ class Hostelmodel {
     this.imageUrl,
     this.availableBeds,
     this.location,
+    this.place,
     this.discription,
     this.selectedgenter,
     this.selecteddormetry,
@@ -57,6 +59,7 @@ class Hostelmodel {
      
         availableBeds: json["availableBeds"].toString(),
         location: json["location"],
+        place: json["place"],
         discription: json["discription"],
         selectedgenter: json["selectedgenter"],
         selecteddormetry: json["selecteddormetry"]
@@ -75,6 +78,7 @@ class Hostelmodel {
         
         "availableBeds": availableBeds,
         "location": location,
+        "place":place,
         "discription":discription,
         "selectedgenter":selectedgenter,
         "selecteddormetry":selecteddormetry,

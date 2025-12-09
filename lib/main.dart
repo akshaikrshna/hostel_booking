@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hostel_booking/Notifications/firebase_api.dart';
 import 'package:hostel_booking/Splash/splashpage.dart';
-import 'package:hostel_booking/admin/bottomnav.dart';
-
+import 'package:hostel_booking/vendor/bottomnav.dart';
+final GlobalKey<NavigatorState> navigatorKey =
+      GlobalKey<NavigatorState>();
 void main()async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -24,6 +25,7 @@ class MyApp extends StatelessWidget {
       splitScreenMode: true,
       builder: (context, child) {
         return MaterialApp(
+          navigatorKey: navigatorKey,
           debugShowCheckedModeBanner: false,
           home: Splashpage(),
         );

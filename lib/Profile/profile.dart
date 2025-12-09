@@ -1,9 +1,11 @@
+import 'dart:math';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hostel_booking/Auth/authservice.dart';
 import 'package:hostel_booking/Login/loginpage.dart';
+import 'package:hostel_booking/functions/functions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Profile extends StatefulWidget {
@@ -14,13 +16,23 @@ class Profile extends StatefulWidget {
 }
 
 class _profileState extends State<Profile> {
+    Map<String, dynamic>? userData;
   final _authservice = AuthService();
-  
 
-  final String userName = "Swalih Ibnu Muhammed";
-  final String userEmail = "swalih@gmail.com";
-  final String userPhone = "9876543210";
+      final fetchuserdata fetchuser = fetchuserdata();
 
+    void loadUser() async {
+      userData = await fetchuser.getUserData();
+
+      setState(() {
+        
+      });
+    }
+    @override
+  void initState() {
+   loadUser();
+    super.initState();  
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -93,7 +105,7 @@ class _profileState extends State<Profile> {
                         ),
                         SizedBox(height: 12.h),
                         Text(
-                          userName,
+                          "${userData?["name"]}"??"",
                           style: TextStyle(
                             fontSize: 18.sp,
                             fontWeight: FontWeight.w600,
@@ -131,14 +143,14 @@ class _profileState extends State<Profile> {
                         _buildInfoItem(
                           icon: Icons.email_outlined,
                           title: "Email",
-                          subtitle: userEmail,
+                          subtitle: "${userData?["email"]}"??"",
                           iconColor: Color(0xff090807),
                         ),
                         SizedBox(height: 16.h),
                         _buildInfoItem(
                           icon: Icons.phone_iphone_sharp,
                           title: "Phone",
-                          subtitle: userPhone,
+                          subtitle: "${userData?["phonenumber"]}"??"",
                           iconColor: Colors.green,
                         ),
                       ],

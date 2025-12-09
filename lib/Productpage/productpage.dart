@@ -2,6 +2,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hostel_booking/BookNow/booknow.dart';
+import 'package:hostel_booking/Productpage/chat.dart';
 import 'package:hostel_booking/utils/helper/razorpay_service/razorpay.dart';
 import 'package:hostel_booking/Globel/globel.dart';
 import 'package:hostel_booking/Model/hostelmodel.dart';
@@ -32,6 +33,18 @@ class _ProdectpageState extends State<Prodectpage> {
       print("Could not launch dialer");
     }
   }
+
+  void openLocation() async {
+  final Uri url = Uri.parse(
+      "${widget.hosteldetailes?.location}");
+
+  if (await canLaunchUrl(url)) {
+    await launchUrl(url, mode: LaunchMode.externalApplication);
+  } else {
+    throw "Could not open the map.";
+  }
+}
+
 
   Widget _buildAmenityIcon(IconData icon, String text, bool isAvailable) {
     return Container(
@@ -128,8 +141,6 @@ class _ProdectpageState extends State<Prodectpage> {
                     onPageChanged: (i, _) => setState(() => currentIndex = i),
                   ),
                 ),
-                
-                // Image Indicator
                 Positioned(
                   bottom: 16.h,
                   left: 0,
@@ -154,7 +165,7 @@ class _ProdectpageState extends State<Prodectpage> {
               ],
             ),
 
-            // Content Section
+            
             Container(
               width: double.infinity,
               decoration: BoxDecoration(
@@ -208,11 +219,10 @@ class _ProdectpageState extends State<Prodectpage> {
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(Icons.star,
-                                  color: Colors.pink, size: 16.sp),
+                              
                               SizedBox(width: 2.w),
                               Text(
-                                "4.5",
+                                "${widget.hosteldetailes?.selectedgenter}",
                                 style: TextStyle(
                                   color: Colors.pink,
                                   fontSize: 14.sp,
@@ -276,8 +286,52 @@ class _ProdectpageState extends State<Prodectpage> {
                         ],
                       ),
                     ),
+                    SizedBox(height: 15.h),
+                    Text(
+                      "Available Beds",
+                      style: TextStyle(
+                        fontSize: 20.sp,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    SizedBox(height: 10.w),
+                    Container(
+      margin: EdgeInsets.only(right: 12.w, bottom: 12.h),
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+      decoration: BoxDecoration(
+        color: 
+             Color(0xffFEAA61).withOpacity(0.1),
+            
+        borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(
+          color:  Color(0xffFEAA61) ,
+          width: 1,
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            Icons.bed_outlined,
+            color:   Colors.grey,
+            size: 18.sp,
+          ),
+          SizedBox(width: 4.w),
+          Text(
+            "${widget.hosteldetailes?.availableBeds}",
+            style: TextStyle(
+              fontSize: 15.sp,
+              color:  Colors.grey ,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    ),
+                    
 
-                    SizedBox(height: 24.h),
+                    SizedBox(height: 10.h),
 
                     // Amenities Section
                     Text(
@@ -333,24 +387,27 @@ class _ProdectpageState extends State<Prodectpage> {
                     ),
                     SizedBox(height: 12.h),
 
-                    Container(
-                      height: 160.h,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12.r),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.2),
-                            blurRadius: 8,
-                            offset: Offset(0, 2),
+                    GestureDetector(
+                      onTap: openLocation,
+                      child: Container(
+                        height: 160.h,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12.r),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.2),
+                              blurRadius: 8,
+                              offset: Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(12.r),
+                          child: Image.network(
+                            "https://media.wired.com/photos/59269cd37034dc5f91bec0f1/191:100/w_1280,c_limit/GoogleMapTA.jpg",
+                            fit: BoxFit.cover,
                           ),
-                        ],
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(12.r),
-                        child: Image.network(
-                          "https://media.wired.com/photos/59269cd37034dc5f91bec0f1/191:100/w_1280,c_limit/GoogleMapTA.jpg",
-                          fit: BoxFit.cover,
                         ),
                       ),
                     ),
@@ -430,7 +487,9 @@ class _ProdectpageState extends State<Prodectpage> {
                         borderRadius: BorderRadius.circular(10.r),
                       ),
                       child: IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => ChatPage(),));
+                        },
                         icon: Icon(Icons.message, color: Color(0xffFEAA61)),
                       ),
                     ),
@@ -460,8 +519,9 @@ class _ProdectpageState extends State<Prodectpage> {
                     onPressed: () {
                       Navigator.push(
                         context,
+                        
                         MaterialPageRoute(
-                            builder: (context) => Bookingpage()),
+                            builder: (context) => BookingPage(hosteldetailes: widget.hosteldetailes,)),
                       );
                     },
                     style: ElevatedButton.styleFrom(
