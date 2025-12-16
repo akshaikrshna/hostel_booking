@@ -9,27 +9,7 @@ import 'package:hostel_booking/Homepage/homepage.dart';
 import 'package:hostel_booking/PgRooms/pgrooms.dart';
 import 'package:hostel_booking/Profile/profile.dart';
 
-void main() {
-  runApp(const MyApp());
-}
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Modern Nav Bar',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        useMaterial3: true,
-        brightness: Brightness.light,
-      ),
-      home: const ModernNavBar(),
-    );
-  }
-}
 
 class ModernNavBar extends StatefulWidget {
   const ModernNavBar({Key? key}) : super(key: key);

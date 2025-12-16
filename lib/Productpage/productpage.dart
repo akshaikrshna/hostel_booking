@@ -134,7 +134,7 @@ class _ProdectpageState extends State<Prodectpage> {
                       )
                       .toList(),
                   options: CarouselOptions(
-                    height: 320.h,
+                    height: 370.h,
                     autoPlay: true,
                     viewportFraction: 1.0,
                     enlargeCenterPage: false,

@@ -21,16 +21,15 @@ class _HomepageState extends State<Homepage> {
 
   String ?selectedCategory;
 
-    final fetchuserdata fetchuser = fetchuserdata();
+    final Fetchuserdata fetchuser = Fetchuserdata();
 
     void loadUser() async {
       userData = await fetchuser.getUserData();
       log("message");
-      setState(() {
-        
-      });
+     if (!mounted) return;
+setState(() {});
     }
-    
+
     @override
   void initState() {
    loadUser();
@@ -558,9 +557,11 @@ class _HomepageState extends State<Homepage> {
     final bool selected = selectedCategory == value;
     return GestureDetector(
       onTap: () {
-        setState(() {
-          selectedCategory = value;
-        });
+        if (!mounted) return;
+  setState(() {
+    selectedCategory = value;
+  });
+
       },
       child: Container(
         margin: EdgeInsets.only(right: 12.w),

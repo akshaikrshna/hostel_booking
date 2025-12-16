@@ -94,22 +94,12 @@ class _PersonState extends State<Person> with SingleTickerProviderStateMixin {
                 padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
               ),
               onPressed: () async {
-                Navigator.of(context).pop();
-                // Show loading indicator
-                showDialog(
-                  context: context,
-                  barrierDismissible: false,
-                  builder: (context) => Center(
-                    child: CircularProgressIndicator(color: Colors.white),
-                  ),
-                );
-                
-                // Clear preferences
-                final prefs = await SharedPreferences.getInstance();
-                await prefs.clear();
-                
-                // Sign out
+                    // Sign out
                 await _authservice.signout(context);
+            
+              
+                
+            
               },
               child: Text(
                 "Logout",

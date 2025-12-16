@@ -45,82 +45,47 @@ class AuthService {
     return res;
   }
 
-  Future<String?> login({
-    required String email,
-    required String password,
-    required BuildContext context,
-  }) async {
-    try {
-      UserCredential _usercredential = await _auth.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-      
-      User? user = _usercredential.user;
+ Future<String?> login({
+  required String email,
+  required String password,
+}) async {
+  try {
+    UserCredential credential =
+        await _auth.signInWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
 
+    final uid = credential.user!.uid;
 
-     String uid = user!.uid;
-    
+    final userDoc = await _firestore
+        .collection("User")
+        .doc(uid)
+        .get();
 
-     DocumentSnapshot snapshot =
-      await FirebaseFirestore.instance.collection('User').doc(uid).get();
+    if (!userDoc.exists) {
+      return "User data not found";
+    }
 
-      if (snapshot.exists) {
-     snapshot.data() as Map<String, dynamic>;
-  } else {
-    showStatusSnackBar(context, "login successfull", SnackbarStatus.success);
-  }
-     
-     final prefs = await SharedPreferences.getInstance();
-     
-    
-     
-      if (user != null) {
-        DocumentSnapshot userdoc = await _firestore
-            .collection("User")
-            .doc(user.uid)
-            .get();
-        if (userdoc.exists) {
-          Map<String, dynamic> userdata =
-              userdoc.data() as Map<String, dynamic>;
-          String role = userdata['role'];
-          await prefs.setString("uid", uid);
-         await prefs.setString("role",role);
+    final role = userDoc['role'];
 
-          if (role == 'user') {
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (context) => ModernNavBar()),
-              (route) => false,
-            );
-          } else {
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (context) => Bottomnav()),
-              (route) => false,
-            );
-          }
-        }
-      }
-      return "success"; // ✅ Return success message
-    } on FirebaseAuthException catch (e) {
-      // ✅ Handle Firebase-specific errors
-      if (e.code == 'user-not-found') {
-        return 'No user found for that email.';
-      } else if (e.code == 'wrong-password') {
-        return 'Wrong password provided.';
-      } else if (e.code == 'invalid-email') {
-        return 'Invalid email address.';
-      } else if (e.code == 'invalid-credential') {
-        return 'Invalid login credentials.';
-      } else {
-        return 'Login failed. Please try again.';
-      }
-    } catch (e) {
-      // ✅ Handle any other unexpected errors
-      return 'An unexpected error occurred. Please try again later.';
+    // Optional: store if you really need later
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString("uid", uid);
+    await prefs.setString("role", role);
+
+    return role;
+  } on FirebaseAuthException catch (e) {
+    if (e.code == 'user-not-found') {
+      return 'user-not-found';
+    } else if (e.code == 'wrong-password') {
+      return 'wrong-password';
+    } else {
+      return 'login-failed';
     }
   }
+}
+
   Future<void> signout(BuildContext context) async {
     await FirebaseAuth.instance.signOut();
     final prefs = await SharedPreferences.getInstance();
@@ -128,7 +93,7 @@ class AuthService {
      if (!context.mounted) return;
     Navigator.pushAndRemoveUntil(
       context,
-      MaterialPageRoute(builder: (context) => Loginpage()),
+      MaterialPageRoute(builder: (context) => LoginPage2()),
       (Route<dynamic> route) => false,
     );
   }

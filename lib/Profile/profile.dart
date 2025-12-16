@@ -1,32 +1,28 @@
-import 'dart:math';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hostel_booking/Auth/authservice.dart';
-import 'package:hostel_booking/Login/loginpage.dart';
 import 'package:hostel_booking/functions/functions.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
 
   @override
-  State<Profile> createState() => _profileState();
+  State<Profile> createState() => _ProfileState();
 }
 
-class _profileState extends State<Profile> {
+class _ProfileState extends State<Profile> {
     Map<String, dynamic>? userData;
   final _authservice = AuthService();
 
-      final fetchuserdata fetchuser = fetchuserdata();
+      final Fetchuserdata fetchuser = Fetchuserdata();
 
     void loadUser() async {
       userData = await fetchuser.getUserData();
-
-      setState(() {
-        
-      });
+      
+    
+      if (!mounted) return;
+setState(() {});
     }
     @override
   void initState() {
@@ -439,9 +435,6 @@ class _profileState extends State<Profile> {
             TextButton(
               onPressed: () async {
                 Navigator.of(context).pop();
-                final prefs = await SharedPreferences.getInstance();
-                prefs.remove('uid');
-                prefs.remove('role');
                 await _authservice.signout(context);
               },
               child: Text(

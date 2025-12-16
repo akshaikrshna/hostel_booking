@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hostel_booking/BookNow/address.dart';
 import 'package:hostel_booking/Model/hostelmodel.dart';
+import 'package:hostel_booking/Model/paymentstatus_model.dart';
 import 'package:hostel_booking/utils/helper/razorpay_service/razorpay.dart';
 import 'package:intl/intl.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
@@ -19,7 +21,6 @@ class _BookingPageState extends State<BookingPage> {
   int _selectedTab = 0;
   String _selectedRoom = "Single Room";
 
-  // Price calculation variables
   double _roomPrice = 0;
   double _tax = 0;
   double _guests = 1;
@@ -551,13 +552,53 @@ class _BookingPageState extends State<BookingPage> {
     );
   }
 
-  void _proceedToNextStep() {
+  void _proceedToNextStep() async{
     if (_selectedTab < 2) {
       setState(() {
         _selectedTab++;
       });
     } else {
-      RazorpayService().openCheckout(key: "rzp_test_RQX7adT0U42yu4", amount: _totalAmount.toInt()*100);
+      try{
+        PaymentModel body = PaymentModel();
+
+        body.hostelname = widget.hosteldetailes?.hostelName;
+        body.hostelprice = widget.hosteldetailes?.place;
+        body.bedconunt = _guests.toString();
+        body.grandtotal = _roomPrice.toString();
+        body.paymentstatus = "pending";
+        body.status = 1;
+
+         await FirebaseFirestore.instance.collection('booking').add(body.toJson()).then((value) {
+          body.bookingid = value.id;
+           value.update(body.toJson());
+         },);
+         final razorpayService = RazorpayService(
+  onSuccess: (PaymentSuccessResponse response) async {
+    body.paymentstatus = "success";
+    body.status = 2;
+
+    if (body.bookingid != null && body.bookingid!.isNotEmpty) {
+      await FirebaseFirestore.instance
+          .collection('booking')
+          .doc(body.bookingid)
+          .update(body.toJson());
+    }
+
+    _processPayment();
+  },
+  
+  onError: (PaymentFailureResponse response) {
+    debugPrint("Payment failed");
+  },
+);
+  RazorpayService().openCheckout(key: "rzp_test_RQX7adT0U42yu4", amount: _totalAmount.toInt()*100);
+
+
+      }catch(e){
+
+      }
+    
+    
     }
   }
 

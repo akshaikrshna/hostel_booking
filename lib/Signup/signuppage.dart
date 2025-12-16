@@ -88,7 +88,11 @@ class _RegisterPageState extends State<RegisterPage>
       backgroundColor: Colors.white,
       appBar: AppBar(
         centerTitle: true,
-        leading: SizedBox(),
+        leading: GestureDetector(
+          onTap: () {
+            Navigator.pop(context);
+          },
+          child: Icon(Icons.arrow_back_ios)),
         backgroundColor: Colors.white,
         title: const Text(
           "Register",
@@ -100,9 +104,9 @@ class _RegisterPageState extends State<RegisterPage>
         ),
         bottom: TabBar(
           controller: _tabController,
-          labelColor: Colors.lightBlue,
+          labelColor: Color(0xffFEAA61),
           unselectedLabelColor: Colors.grey,
-          indicatorColor: Colors.lightBlue,
+          indicatorColor: Color(0xffFEAA61),
           tabs: const [
             Tab(text: "User"),
             Tab(text: "Vendor"),
@@ -333,8 +337,6 @@ class _RegisterPageState extends State<RegisterPage>
                         value!.length < 6 ? "Min 6 characters" : null,
                   ),
                   const SizedBox(height: 30),
-
-                  // Register Button
                   Center(
                     child: GestureDetector(
                       onTap: () async {},
@@ -367,7 +369,7 @@ class _RegisterPageState extends State<RegisterPage>
                           height: 50,
                           width: 350,
                           decoration: BoxDecoration(
-                            color: Colors.lightBlue,
+                            color: Color(0xffFEAA61),
                             borderRadius: BorderRadius.circular(15),
                           ),
                           child: const Center(
@@ -375,7 +377,7 @@ class _RegisterPageState extends State<RegisterPage>
                               "Register as User",
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                                color: Colors.white,
+                                color: Colors.black,
                               ),
                             ),
                           ),
@@ -604,7 +606,7 @@ class _RegisterPageState extends State<RegisterPage>
                         height: 50,
                         width: 350,
                         decoration: BoxDecoration(
-                          color: Colors.lightBlue,
+                          color: Color(0xffFEAA61),
                           borderRadius: BorderRadius.circular(15),
                         ),
                         child: const Center(
@@ -612,7 +614,7 @@ class _RegisterPageState extends State<RegisterPage>
                             "Registor as vendor",
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                              color: Colors.black,
                             ),
                           ),
                         ),
