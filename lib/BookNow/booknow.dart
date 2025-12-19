@@ -1,8 +1,10 @@
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hostel_booking/BookNow/address.dart';
 import 'package:hostel_booking/Model/hostelmodel.dart';
-import 'package:hostel_booking/Model/paymentstatus_model.dart';
+import 'package:hostel_booking/Model/booking_model.dart';
 import 'package:hostel_booking/utils/helper/razorpay_service/razorpay.dart';
 import 'package:intl/intl.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
@@ -18,6 +20,7 @@ class BookingPage extends StatefulWidget {
 }
 
 class _BookingPageState extends State<BookingPage> {
+
   int _selectedTab = 0;
   String _selectedRoom = "Single Room";
 
@@ -25,7 +28,25 @@ class _BookingPageState extends State<BookingPage> {
   double _tax = 0;
   double _guests = 1;
   double _totalAmount = 0;
+
+  DateTime? _checkInDate;
+int _months = 1;
   
+
+  Future<void> _pickCheckInDate() async {
+  DateTime? picked = await showDatePicker(
+    context: context,
+    initialDate: DateTime.now(),
+    firstDate: DateTime.now(),
+    lastDate: DateTime.now().add(Duration(days: 365)),
+  );
+
+  if (picked != null) {
+    setState(() {
+      _checkInDate = picked;
+    });
+  }
+}
 
   List<Map<String, dynamic>> addresses = [
     {
@@ -47,11 +68,19 @@ class _BookingPageState extends State<BookingPage> {
   ];
 
   int _selectedAddressIndex = 0;
-  String _selectedPaymentMethod = "Credit Card";
+
+
+@override
+void dispose() {
+
+  super.dispose();
+}
+
 
   @override
   void initState() {
     super.initState();
+    print(" Hostel Details: ${widget.hosteldetailes?.hostelerid}");
     // Initialize price calculation
     _calculateTotal();
   }
@@ -156,7 +185,8 @@ class _BookingPageState extends State<BookingPage> {
                           borderRadius: BorderRadius.circular(8),
                           image: DecorationImage(
                             image: NetworkImage(
-                                "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=400"),
+                                "${widget.hosteldetailes?.imageUrl!.first}",
+                            ),
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -167,7 +197,7 @@ class _BookingPageState extends State<BookingPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              widget.hosteldetailes?.hostelName ?? "Luxury Hostel Downtown",
+                              widget.hosteldetailes?.hostelName ?? "",
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
@@ -176,13 +206,10 @@ class _BookingPageState extends State<BookingPage> {
                             SizedBox(height: 4),
                             Row(
                               children: [
-                                Icon(Icons.star, color: Colors.amber, size: 16),
-                                SizedBox(width: 4),
-                                Text("4.8"),
-                                SizedBox(width: 8),
+                              
                                 Icon(Icons.location_on, color: Colors.grey, size: 16),
                                 SizedBox(width: 4),
-                                Text("Downtown", style: TextStyle(color: Colors.grey)),
+                                Text(widget.hosteldetailes?.place ?? "", style: TextStyle(color: Colors.grey)),
                               ],
                             ),
                           ],
@@ -194,7 +221,7 @@ class _BookingPageState extends State<BookingPage> {
                   Divider(),
                   SizedBox(height: 8),
                   Text(
-                    "Premium accommodation with all modern amenities including WiFi, AC, attached bathroom, and 24/7 security.",
+                    "${widget.hosteldetailes?.discription}",
                     style: TextStyle(color: Colors.grey[600]),
                   ),
                 ],
@@ -269,6 +296,98 @@ class _BookingPageState extends State<BookingPage> {
               ),
             ),
           ),
+          SizedBox(height: 16),
+
+/// CHECK-IN DATE
+Card(
+  elevation: 2,
+  child: Padding(
+    padding: EdgeInsets.all(16),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "Check-in Date",
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        SizedBox(height: 12),
+        InkWell(
+          onTap: _pickCheckInDate,
+          child: Container(
+            padding: EdgeInsets.symmetric(vertical: 14, horizontal: 12),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  _checkInDate == null
+                      ? "Select check-in date"
+                      : DateFormat("dd MMM yyyy").format(_checkInDate!),
+                  style: TextStyle(fontSize: 16),
+                ),
+                Icon(Icons.calendar_today, color: Color(0xffFEAA61)),
+              ],
+            ),
+          ),
+        ),
+      ],
+    ),
+  ),
+),
+
+SizedBox(height: 16),
+
+/// STAY DURATION
+Card(
+  elevation: 2,
+  child: Padding(
+    padding: EdgeInsets.all(16),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "Stay Duration",
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        SizedBox(height: 12),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text("Months"),
+            Row(
+              children: [
+                IconButton(
+                  onPressed: () {
+                    if (_months > 1) {
+                      _months--;
+                      _calculateTotal();
+                    }
+                  },
+                  icon: Icon(Icons.remove_circle_outline),
+                ),
+                Text(
+                  "$_months",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                IconButton(
+                  onPressed: () {
+                    _months++;
+                    _calculateTotal();
+                  },
+                  icon: Icon(Icons.add_circle_outline),
+                ),
+              ],
+            )
+          ],
+        ),
+      ],
+    ),
+  ),
+),
+
         ],
       ),
     );
@@ -450,50 +569,6 @@ class _BookingPageState extends State<BookingPage> {
     );
   }
 
-  Widget _buildPaymentMethod(String method, IconData icon) {
-    bool isSelected = _selectedPaymentMethod == method;
-    return InkWell(
-      onTap: () {
-        setState(() {
-          _selectedPaymentMethod = method;
-        });
-      },
-      child: Container(
-        padding: EdgeInsets.all(16),
-        margin: EdgeInsets.only(bottom: 8),
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: isSelected ? Color(0xffFEAA61) : Colors.grey[300]!,
-            width: isSelected ? 2 : 1,
-          ),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 20,
-              height: 20,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: isSelected ? Color(0xffFEAA61) : Colors.grey,
-                  width: 2,
-                ),
-                color: isSelected ? Color(0xffFEAA61) : Colors.transparent,
-              ),
-            ),
-            SizedBox(width: 16),
-            Icon(icon, color: Colors.grey[600]),
-            SizedBox(width: 12),
-            Text(
-              method,
-              style: TextStyle(fontSize: 16),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 
   Widget _buildBottomBar() {
     return Container(
@@ -553,6 +628,15 @@ class _BookingPageState extends State<BookingPage> {
   }
 
   void _proceedToNextStep() async{
+    FirebaseAuth _auth=FirebaseAuth.instance;
+    if (_selectedTab == 2) {
+  if (_checkInDate == null) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Please select check-in date")),
+    );
+    return;
+  }
+}
     if (_selectedTab < 2) {
       setState(() {
         _selectedTab++;
@@ -562,20 +646,27 @@ class _BookingPageState extends State<BookingPage> {
         PaymentModel body = PaymentModel();
 
         body.hostelname = widget.hosteldetailes?.hostelName;
-        body.hostelprice = widget.hosteldetailes?.place;
+        body.hostelprice = widget.hosteldetailes?.price;
+        body.hostelid = widget.hosteldetailes?.hostelid;
+        body.userid =_auth.currentUser?.uid; 
         body.bedconunt = _guests.toString();
         body.grandtotal = _roomPrice.toString();
         body.paymentstatus = "pending";
         body.status = 1;
+        body.hostelerid = widget.hosteldetailes?.hostelerid;
+        body.checkindate = Timestamp.fromDate(_checkInDate!);
+        body.months = _months.toString();
 
          await FirebaseFirestore.instance.collection('booking').add(body.toJson()).then((value) {
           body.bookingid = value.id;
            value.update(body.toJson());
          },);
-         final razorpayService = RazorpayService(
+
+        final razorpayService = RazorpayService(
+  context: context,
   onSuccess: (PaymentSuccessResponse response) async {
     body.paymentstatus = "success";
-    body.status = 2;
+    
 
     if (body.bookingid != null && body.bookingid!.isNotEmpty) {
       await FirebaseFirestore.instance
@@ -586,40 +677,43 @@ class _BookingPageState extends State<BookingPage> {
 
     _processPayment();
   },
-  
-  onError: (PaymentFailureResponse response) {
+  onError: (PaymentFailureResponse response) async{
+     body.paymentstatus = "Failed";
+
+
+    if (body.bookingid != null && body.bookingid!.isNotEmpty) {
+      await FirebaseFirestore.instance
+          .collection('booking')
+          .doc(body.bookingid)
+          .update(body.toJson());
+    }
     debugPrint("Payment failed");
   },
 );
-  RazorpayService().openCheckout(key: "rzp_test_RQX7adT0U42yu4", amount: _totalAmount.toInt()*100);
 
+// ✅ USE SAME INSTANCE
+razorpayService.openCheckout(
+  key: "rzp_test_RQX7adT0U42yu4",
+  amount: (_totalAmount * 100).toInt(),
+);
 
       }catch(e){
 
       }
     
-    
     }
   }
 
- 
-
   void _calculateTotal() {
-    // Get base price from hostel details or use default
-    double pricePerBedPerNight = widget.hosteldetailes?.price != null 
-        ? double.parse(widget.hosteldetailes!.price.toString()) 
-        : 1000.0;
-    
-    // Calculate room price based on beds and nights
-    _roomPrice = pricePerBedPerNight * _guests ;
-    
-    // Calculate tax (18% GST)
-    
-    // Calculate total
-    _totalAmount = _roomPrice ;
-    
-    setState(() {});
-  }
+  double pricePerBedPerMonth = widget.hosteldetailes?.price != null
+      ? double.parse(widget.hosteldetailes!.price.toString())
+      : 1000.0;
+
+  _roomPrice = pricePerBedPerMonth * _guests * _months;
+  _totalAmount = _roomPrice;
+
+  setState(() {});
+}
 
   
 

@@ -263,20 +263,11 @@ setState(() {});
                     color: Colors.grey[800],
                   ),
                 ),
-                TextButton(
-                  onPressed: () {},
-                  child: Text(
-                    "See all",
-                    style: TextStyle(
-                      color: Color(0xffFEAA61),
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
+                
               ],
             ),
           ),
-          
+          SizedBox(height: 15.h),
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
@@ -314,10 +305,16 @@ setState(() {});
                   );
                 }
       
-                final docs = snapshot.data!.docs;
-                final List<Hostelmodel> hostels = docs
-                    .map((doc) => Hostelmodel.fromJson(doc.data() as Map<String, dynamic>))
-                    .toList();
+               final docs = snapshot.data!.docs;
+
+final List<Hostelmodel> hostels = docs.map((doc) {
+  final data = doc.data() as Map<String, dynamic>;
+
+  final hostel = Hostelmodel.fromJson(data);
+  hostel.hostelid = doc.id; 
+
+  return hostel;
+}).toList();
 
                 
                 

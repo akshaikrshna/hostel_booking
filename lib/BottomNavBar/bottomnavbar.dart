@@ -98,19 +98,11 @@ class _ModernNavBarState extends State<ModernNavBar> with TickerProviderStateMix
       extendBody: true,
       body: _buildBody(),
       bottomNavigationBar: Container(
-        // margin: const EdgeInsets.only(left: 12, right: 12, bottom: 20),
         padding: const EdgeInsets.symmetric(vertical: 8),
         
         decoration: BoxDecoration(
           color: Colors.transparent,
           borderRadius: BorderRadius.circular(30),
-          // boxShadow: [
-          //   BoxShadow(
-          //     color: Colors.black.withOpacity(0.15),
-          //     blurRadius: 30,
-          //     offset: const Offset(0, 10),
-          //   ),
-          // ],
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(30),

@@ -348,198 +348,201 @@ class _PersonState extends State<Person> with SingleTickerProviderStateMixin {
 
             // Profile Content
             SliverToBoxAdapter(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(height: 20.h),
-
-                  // Personal Information Section
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20.w),
-                    child: Text(
-                      "Personal Information",
-                      style: TextStyle(
-                        fontSize: 18.sp,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black87,
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 65  ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: 20.h),
+                
+                    // Personal Information Section
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 20.w),
+                      child: Text(
+                        "Personal Information",
+                        style: TextStyle(
+                          fontSize: 18.sp,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black87,
+                        ),
                       ),
                     ),
-                  ),
-                  SizedBox(height: 12.h),
-
-                  _buildInfoCard(
-                    icon: Icons.email_rounded,
-                    title: "Email Address",
-                    subtitle: userEmail,
-                    iconColor: Colors.blue,
-                  ),
-                  _buildInfoCard(
-                    icon: Icons.phone_android_rounded,
-                    title: "Phone Number",
-                    subtitle: userPhone,
-                    iconColor: Colors.green,
-                  ),
-                  _buildInfoCard(
-                    icon: Icons.location_city_rounded,
-                    title: "City",
-                    subtitle: userCity,
-                    iconColor: Colors.orange,
-                  ),
-
-                  SizedBox(height: 24.h),
-
-                  // Quick Actions Section
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20.w),
-                    child: Text(
-                      "Quick Actions",
-                      style: TextStyle(
-                        fontSize: 18.sp,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black87,
+                    SizedBox(height: 12.h),
+                
+                    _buildInfoCard(
+                      icon: Icons.email_rounded,
+                      title: "Email Address",
+                      subtitle: userEmail,
+                      iconColor: Colors.blue,
+                    ),
+                    _buildInfoCard(
+                      icon: Icons.phone_android_rounded,
+                      title: "Phone Number",
+                      subtitle: userPhone,
+                      iconColor: Colors.green,
+                    ),
+                    _buildInfoCard(
+                      icon: Icons.location_city_rounded,
+                      title: "City",
+                      subtitle: userCity,
+                      iconColor: Colors.orange,
+                    ),
+                
+                    SizedBox(height: 24.h),
+                
+                    // Quick Actions Section
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 20.w),
+                      child: Text(
+                        "Quick Actions",
+                        style: TextStyle(
+                          fontSize: 18.sp,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black87,
+                        ),
                       ),
                     ),
-                  ),
-                  SizedBox(height: 12.h),
-
-                  // Add Hostel Button
-                  _buildActionButton(
-                    title: "Add New Hostel",
-                    icon: Icons.add_business_rounded,
-                    color: AppColors.primaryColor,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => Addhostel(),
+                    SizedBox(height: 12.h),
+                
+                    // Add Hostel Button
+                    _buildActionButton(
+                      title: "Add New Hostel",
+                      icon: Icons.add_business_rounded,
+                      color: AppColors.primaryColor,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => Addhostel(),
+                          ),
+                        );
+                      },
+                    ),
+                
+                    SizedBox(height: 12.h),
+                
+                    // Settings & Support Section
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 20.w),
+                      child: Text(
+                        "Settings & Support",
+                        style: TextStyle(
+                          fontSize: 18.sp,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black87,
                         ),
-                      );
-                    },
-                  ),
-
-                  SizedBox(height: 12.h),
-
-                  // Settings & Support Section
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20.w),
-                    child: Text(
-                      "Settings & Support",
-                      style: TextStyle(
-                        fontSize: 18.sp,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black87,
                       ),
                     ),
-                  ),
-                  SizedBox(height: 12.h),
-
-                  _buildInfoCard(
-                    icon: Icons.settings_rounded,
-                    title: "Settings",
-                    subtitle: "App preferences and settings",
-                    iconColor: Colors.grey,
-                    onTap: () {
-                      // Navigate to settings
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('Settings feature coming soon!'),
-                          behavior: SnackBarBehavior.floating,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.r),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                  _buildInfoCard(
-                    icon: Icons.help_rounded,
-                    title: "Help & Support",
-                    subtitle: "Get help and contact support",
-                    iconColor: Colors.purple,
-                    onTap: () {
-                      // Navigate to help
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('Help center opening...'),
-                          behavior: SnackBarBehavior.floating,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.r),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                  _buildInfoCard(
-                    icon: Icons.info_rounded,
-                    title: "About",
-                    subtitle: "Version 1.0.0",
-                    iconColor: Colors.teal,
-                    onTap: () {
-                      // Show about dialog
-                      showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.r),
-                          ),
-                          title: Text('About App'),
-                          content: Text('Hostel Booking App\nVersion 1.0.0\n\n© 2024 All Rights Reserved'),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.pop(context),
-                              child: Text('Close'),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-
-                  SizedBox(height: 24.h),
-
-                  // Logout Button
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20.w),
-                    child: Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        onTap: _showLogoutDialog,
-                        borderRadius: BorderRadius.circular(16.r),
-                        child: Container(
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            color: Colors.red.withOpacity(0.05),
-                            borderRadius: BorderRadius.circular(16.r),
-                            border: Border.all(
-                              color: Colors.red.withOpacity(0.3),
-                              width: 1.5,
+                    SizedBox(height: 12.h),
+                
+                    _buildInfoCard(
+                      icon: Icons.settings_rounded,
+                      title: "Settings",
+                      subtitle: "App preferences and settings",
+                      iconColor: Colors.grey,
+                      onTap: () {
+                        // Navigate to settings
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Settings feature coming soon!'),
+                            behavior: SnackBarBehavior.floating,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.r),
                             ),
                           ),
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(vertical: 16.h),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(Icons.logout_rounded, color: Colors.red, size: 22.sp),
-                                SizedBox(width: 10.w),
-                                Text(
-                                  "Logout",
-                                  style: TextStyle(
-                                    fontSize: 16.sp,
-                                    color: Colors.red,
-                                    fontWeight: FontWeight.w600,
+                        );
+                      },
+                    ),
+                    _buildInfoCard(
+                      icon: Icons.help_rounded,
+                      title: "Help & Support",
+                      subtitle: "Get help and contact support",
+                      iconColor: Colors.purple,
+                      onTap: () {
+                        // Navigate to help
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Help center opening...'),
+                            behavior: SnackBarBehavior.floating,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.r),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    _buildInfoCard(
+                      icon: Icons.info_rounded,
+                      title: "About",
+                      subtitle: "Version 1.0.0",
+                      iconColor: Colors.teal,
+                      onTap: () {
+                        // Show about dialog
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.r),
+                            ),
+                            title: Text('About App'),
+                            content: Text('Hostel Booking App\nVersion 1.0.0\n\n© 2024 All Rights Reserved'),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(context),
+                                child: Text('Close'),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                
+                    SizedBox(height: 24.h),
+                
+                    // Logout Button
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 20.w),
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          onTap: _showLogoutDialog,
+                          borderRadius: BorderRadius.circular(16.r),
+                          child: Container(
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: Colors.red.withOpacity(0.05),
+                              borderRadius: BorderRadius.circular(16.r),
+                              border: Border.all(
+                                color: Colors.red.withOpacity(0.3),
+                                width: 1.5,
+                              ),
+                            ),
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(vertical: 16.h),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.logout_rounded, color: Colors.red, size: 22.sp),
+                                  SizedBox(width: 10.w),
+                                  Text(
+                                    "Logout",
+                                    style: TextStyle(
+                                      fontSize: 16.sp,
+                                      color: Colors.red,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-
-                  SizedBox(height: 40.h),
-                ],
+                
+                    SizedBox(height: 40.h),
+                  ],
+                ),
               ),
             ),
           ],

@@ -1,10 +1,9 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hostel_booking/BookNow/booknow.dart';
 import 'package:hostel_booking/Productpage/chat.dart';
-import 'package:hostel_booking/utils/helper/razorpay_service/razorpay.dart';
-import 'package:hostel_booking/Globel/globel.dart';
 import 'package:hostel_booking/Model/hostelmodel.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -17,6 +16,8 @@ class Prodectpage extends StatefulWidget {
 }
 
 class _ProdectpageState extends State<Prodectpage> {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
   final List<String> images = [
     "https://picsum.photos/id/1025/800/500",
     "https://picsum.photos/id/1018/800/500",
@@ -109,7 +110,27 @@ class _ProdectpageState extends State<Prodectpage> {
               shape: BoxShape.circle,
             ),
             child: IconButton(
-              onPressed: () {},
+              onPressed: () async{
+                // Handle favorite action
+                await _firestore
+                    .collection('favorites')
+                    .doc(widget.hosteldetailes?.hostelid) 
+                    .set({
+                  'hostelName': widget.hosteldetailes?.hostelName,
+                  'ownerName': widget.hosteldetailes?.ownerName,
+                  'phone': widget.hosteldetailes?.phone,
+                  'price': widget.hosteldetailes?.price,
+                  'imageUrl': widget.hosteldetailes?.imageUrl,
+                  'availableBeds': widget.hosteldetailes?.availableBeds,
+                  'location': widget.hosteldetailes?.location,
+                  "place": widget.hosteldetailes?.place,
+                  'discription': widget.hosteldetailes?.discription,
+                  'selectedgenter': widget.hosteldetailes?.selectedgenter,
+                  'selecteddormetry': widget.hosteldetailes?.selecteddormetry,
+                  'hostelid': widget.hosteldetailes?.hostelid,
+                  
+                });
+              },
               icon: Icon(Icons.favorite_border, color: Colors.white, size: 20.sp),
               padding: EdgeInsets.zero,
             ),
@@ -488,7 +509,7 @@ class _ProdectpageState extends State<Prodectpage> {
                       ),
                       child: IconButton(
                         onPressed: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => ChatPage(),));
+                          openWhatsApp("${widget.hosteldetailes?.phone}");
                         },
                         icon: Icon(Icons.message, color: Color(0xffFEAA61)),
                       ),

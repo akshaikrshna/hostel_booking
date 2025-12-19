@@ -8,6 +8,7 @@ String hostelmodelToJson(List<Hostelmodel> data) =>
     json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class Hostelmodel {
+  String? hostelid;
   Amenities? amenities;
   Timestamp? createdAt;
   String? address;
@@ -22,8 +23,10 @@ class Hostelmodel {
   String? discription;
   String? selectedgenter;
   String? selecteddormetry;
+  String? hostelerid;
 
   Hostelmodel({
+    this.hostelid,
     this.amenities,
     this.createdAt,
     this.address,
@@ -38,6 +41,7 @@ class Hostelmodel {
     this.discription,
     this.selectedgenter,
     this.selecteddormetry,
+    this.hostelerid,
   });
 
   /// 🔹 Create a model from JSON / Firestore Map
@@ -51,6 +55,7 @@ class Hostelmodel {
                 ? Timestamp.fromMillisecondsSinceEpoch(json["createdAt"])
                 : null,
         address: json["address"],
+        hostelid: json["hostelid"],
         ownerName: json["ownerName"],
         phone: json["phone"],
         price: json["price"].toString(),
@@ -62,12 +67,15 @@ class Hostelmodel {
         place: json["place"],
         discription: json["discription"],
         selectedgenter: json["selectedgenter"],
-        selecteddormetry: json["selecteddormetry"]
+        selecteddormetry: json["selecteddormetry"],
+        hostelerid: json["hostelerId"],
+
       );
 
 
   Map<String, dynamic> toJson() => {
         "amenities": amenities?.toJson(),
+        "hostelid":hostelid,
         "createdAt": createdAt,
         "address": address,
         "ownerName": ownerName,
@@ -82,6 +90,7 @@ class Hostelmodel {
         "discription":discription,
         "selectedgenter":selectedgenter,
         "selecteddormetry":selecteddormetry,
+        "hostelerId":hostelerid,
       };
 }
 

@@ -13,6 +13,8 @@ String paymentModelToJson(PaymentModel data) => json.encode(data.toJson());
 class PaymentModel {
   String? bookingid;
   Timestamp? createdAt;
+  String? userid;
+  String? hostelerid;
     String? hostelid;
     String? hostelname;
     String? hostelprice;
@@ -20,9 +22,15 @@ class PaymentModel {
     String? grandtotal;
     String? paymentstatus;
     int? status;
+    String? hostlerId;
+    Timestamp? checkindate;
+    String? months;
+
 
     PaymentModel({
       this.bookingid,
+      this.hostelerid,
+      this.userid,
       this. createdAt,
         this.hostelid,
         this.hostelname,
@@ -31,10 +39,15 @@ class PaymentModel {
         this.grandtotal,
         this.paymentstatus,
         this.status,
+        this.hostlerId,
+        this.checkindate,
+        this.months,
     });
 
     factory PaymentModel.fromJson(Map<String, dynamic> json) => PaymentModel(
         bookingid: json["bookingid"],
+        hostelerid: json["hostelerid"],
+        userid:json["userid"],
         createdAt: json["createdAt"] is Timestamp
             ? json["createdAt"]
             : json["createdAt"] != null
@@ -47,10 +60,19 @@ class PaymentModel {
         grandtotal: json["grandtotal"],
         paymentstatus: json["paymentstatus"],
         status: json["status"],
+        hostlerId: json["hostelerId"],
+        checkindate: json["checkindate"] is Timestamp
+            ? json["checkindate"]
+            : json["checkindate"] != null
+                ? Timestamp.fromMillisecondsSinceEpoch(json["checkindate"])
+                : null,
+        months: json["months"],
     );
 
     Map<String, dynamic> toJson() => {
         "bookingid":bookingid,
+        "hostelerid":hostelerid,
+        "userid":userid,
          "createdAt": createdAt,
         "hostelid": hostelid,
         "hostelname": hostelname,
@@ -59,5 +81,8 @@ class PaymentModel {
         "grandtotal": grandtotal,
         "paymentstatus": paymentstatus,
         "status": status,
+        "hostelerId": hostlerId,
+        "checkindate": checkindate,
+        "months": months,
     };
 }

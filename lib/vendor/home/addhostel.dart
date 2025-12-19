@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hostel_booking/Cloudnary_uploader/cloudnery_uploader.dart';
 import 'package:hostel_booking/Model/hostelmodel.dart';
@@ -137,6 +138,7 @@ class _AddhostelState extends State<Addhostel> {
       body.discription = _discriptionController.text.trim();
       body.selectedgenter = selectedgenter;
       body.selecteddormetry = selecteddormetry;
+      body.hostelerid = FirebaseAuth.instance.currentUser?.uid;
       body.imageUrl = imageurl;
       body.amenities = Amenities(
         locker: option1,
@@ -279,7 +281,7 @@ class _AddhostelState extends State<Addhostel> {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12.r),
-              borderSide: BorderSide(color: Colors.lightBlue, width: 2),
+              borderSide: BorderSide(color: Color(0xffFEAA61), width: 2),
             ),
             errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12.r),
@@ -328,7 +330,7 @@ class _AddhostelState extends State<Addhostel> {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12.r),
-              borderSide: BorderSide(color: Colors.lightBlue, width: 2),
+              borderSide: BorderSide(color: Color(0xffFEAA61), width: 2),
             ),
           ),
           value: value,
@@ -403,10 +405,10 @@ class _AddhostelState extends State<Addhostel> {
         padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
         margin: EdgeInsets.only(bottom: 8.h),
         decoration: BoxDecoration(
-          color: value ? Colors.lightBlue.withOpacity(0.1) : Colors.grey[50],
+          color: value ? Color(0xffFEAA61).withOpacity(0.1) : Colors.grey[50],
           borderRadius: BorderRadius.circular(10.r),
           border: Border.all(
-            color: value ? Colors.lightBlue : Colors.grey[300]!,
+            color: value ? Color(0xffFEAA61) : Colors.grey[300]!,
             width: 1.5,
           ),
         ),
@@ -416,10 +418,10 @@ class _AddhostelState extends State<Addhostel> {
               width: 24.w,
               height: 24.h,
               decoration: BoxDecoration(
-                color: value ? Colors.lightBlue : Colors.white,
+                color: value ? Color(0xffFEAA61) : Colors.white,
                 borderRadius: BorderRadius.circular(6.r),
                 border: Border.all(
-                  color: value ? Colors.lightBlue : Colors.grey[400]!,
+                  color: value ? Color(0xffFEAA61) : Colors.grey[400]!,
                   width: 2,
                 ),
               ),
@@ -433,7 +435,7 @@ class _AddhostelState extends State<Addhostel> {
               style: TextStyle(
                 fontSize: 14.sp,
                 fontWeight: value ? FontWeight.w600 : FontWeight.w500,
-                color: value ? Colors.lightBlue : Colors.black87,
+                color: value ? Color(0xffFEAA61) : Colors.black87,
               ),
             ),
           ],
@@ -447,7 +449,7 @@ class _AddhostelState extends State<Addhostel> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.lightBlue,
+        backgroundColor: Color(0xffFEAA61),
         elevation: 0,
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
@@ -494,7 +496,7 @@ class _AddhostelState extends State<Addhostel> {
                       label: "Location",
                       hint: "Choose location from map",
                       suffixIcon: IconButton(
-                        icon: Icon(Icons.location_on, color: Colors.lightBlue),
+                        icon: Icon(Icons.location_on, color: Color(0xffFEAA61)),
                         onPressed: () async {
                           final Uri googleMapsUrl = Uri.parse('https://www.google.com/maps');
                           if (await canLaunchUrl(googleMapsUrl)) {
@@ -555,7 +557,7 @@ class _AddhostelState extends State<Addhostel> {
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12.r),
-                          borderSide: BorderSide(color: Colors.lightBlue, width: 2),
+                          borderSide: BorderSide(color: Color(0xffFEAA61), width: 2),
                         ),
                       ),
                       initialCountryCode: 'IN',
@@ -667,14 +669,14 @@ class _AddhostelState extends State<Addhostel> {
                           gradient: LinearGradient(
                             colors: isLoading
                                 ? [Colors.grey, Colors.grey]
-                                : [Colors.lightBlue, Colors.blue],
+                                : [Color(0xffFEAA61), Color(0xffFEAA61)],
                           ),
                           borderRadius: BorderRadius.circular(16.r),
                           boxShadow: isLoading
                               ? []
                               : [
                                   BoxShadow(
-                                    color: Colors.lightBlue.withOpacity(0.3),
+                                    color: Color(0xffFEAA61).withOpacity(0.3),
                                     blurRadius: 12,
                                     offset: Offset(0, 6),
                                   ),
