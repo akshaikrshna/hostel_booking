@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hostel_booking/Model/hostelmodel.dart';
 import 'package:hostel_booking/Productpage/productpage.dart';
 
@@ -31,6 +32,28 @@ class _FavoritesState extends State<Favorites> {
         if (!snapshot.hasData) {
           return const Center(child: CircularProgressIndicator());
         }
+         if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.home_work_outlined,
+                        size: 80.sp,
+                        color: Colors.grey[300],
+                      ),
+                      SizedBox(height: 16.h),
+                      Text(
+                        "No Favorites found",
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }
         final favHostelDocs = snapshot.data!.docs;
         final favHostels = favHostelDocs.map((doc) => Hostelmodel.fromJson(doc.data() as Map<String, dynamic>)).toList();
         return  ListView.builder(
@@ -97,7 +120,14 @@ class _FavoritesState extends State<Favorites> {
                     style: TextStyle(color: Colors.grey[600]),
                   ),
                   Spacer(),
-                  Icon(Icons.favorite_border,size: 30,),
+                  GestureDetector(
+                    onTap:() {
+                      setState(() {
+                        
+                      });
+                      _firestore.collection("favorites").doc(hostel.hostelid).delete();
+                    } ,
+                    child: Icon(Icons.favorite,size: 30,color: Colors.red,)),
                 ],
               ),
               const SizedBox(height: 8),

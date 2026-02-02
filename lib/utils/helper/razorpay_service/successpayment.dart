@@ -1,11 +1,16 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:hostel_booking/Model/booking_model.dart';
+import 'package:hostel_booking/vendor/home/bookings.dart';
+import 'package:intl/intl.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 
 class Successpayment extends StatefulWidget {
-  const Successpayment({super.key});
-
+   Successpayment({super.key,required this.bookingid});
+String bookingid;
   @override
   State<Successpayment> createState() => _SuccesspaymentState();
 }
@@ -92,29 +97,51 @@ class _SuccesspaymentState extends State<Successpayment> {
 
                         const SizedBox(height: 20),
 
-                        Container(
-                          padding: const EdgeInsets.all(15),
-                          decoration: BoxDecoration(
-                            color: Color(0xFFF8FAFC),
-                            borderRadius: BorderRadius.circular(15),
-                            border: Border.all(color: Colors.grey.shade200),
-                          ),
-                          child: Column(
-                            children: [
-                              invoiceRow("Booking ID", "#HBK928374"),
-                              invoiceRow("Hostel Name", "Green Stay Hostel"),
-                              invoiceRow("Room Type", "AC Deluxe Room"),
-                              invoiceRow("Check-in Date", "12 Dec 2025"),
-                              invoiceRow("Check-out Date", "15 Dec 2025"),
-                              invoiceRow("Total Nights", "3"),
-                              Divider(),
-                              invoiceRow(
-                                "Amount Paid",
-                                "₹ 2,400",
-                                isBold: true,
+                        StreamBuilder(
+                          stream: FirebaseFirestore.instance
+                              .collection('booking')
+                              .where("bookingid",
+                                  isEqualTo:
+                                      widget.bookingid).limit(1)
+                              .snapshots(),
+                          builder: (context, asyncSnapshot) {
+                            if (asyncSnapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return CircularProgressIndicator();
+                            }
+                             PaymentModel booking = asyncSnapshot.data?.docs != null && asyncSnapshot.data!.docs.isNotEmpty
+                                ? PaymentModel.fromJson(
+                                    asyncSnapshot.data!.docs[0].data())
+                                : PaymentModel();
+                            return Container(
+                              padding: const EdgeInsets.all(15),
+                              decoration: BoxDecoration(
+                                color: Color(0xFFF8FAFC),
+                                borderRadius: BorderRadius.circular(15),
+                                border: Border.all(color: Colors.grey.shade200),
                               ),
-                            ],
-                          ),
+                              child: Column(
+                                children: [
+                                  invoiceRow(
+  "Date",
+  DateFormat('dd-MMM-yyyy').format(DateTime.now()),
+),
+                                  invoiceRow("Booking ID", booking.bookingid ?? "N/A"),
+                                  invoiceRow("Hostel Name", booking.hostelname ?? "N/A"),
+                                  invoiceRow("Hostel Price", "\$${booking.hostelprice ?? "0.00"}"),
+                                  invoiceRow("Bed Count", booking.bedcount ?? "N/A "),
+                                  invoiceRow("Duration", booking.months ?? "N/A"),
+                                  
+                                  Divider(),
+                                  invoiceRow(
+                                    "Amount Paid",
+                                    "\$${booking.grandtotal ?? "0.00"}",
+                                    isBold: true,
+                                  ),
+                                ],
+                              ),
+                            );
+                          }
                         ),
 
                         const SizedBox(height: 20),
@@ -143,6 +170,7 @@ class _SuccesspaymentState extends State<Successpayment> {
 
                 TextButton(
                   onPressed: () {
+                    Navigator.pop(context);
                     Navigator.pop(context);
                   },
                   child: const Text(

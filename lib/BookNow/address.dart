@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:hostel_booking/BookNow/address_model.dart';
+import 'package:hostel_booking/BookNow/address_service.dart';
 
 class AddressManagementPage extends StatefulWidget {
   @override
@@ -6,32 +8,7 @@ class AddressManagementPage extends StatefulWidget {
 }
 
 class _AddressManagementPageState extends State<AddressManagementPage> {
-  List<Address> addresses = [
-    Address(
-      id: '1',
-      fullName: 'John Doe',
-      phoneNumber: '+1 234 567 8900',
-      addressLine1: '123 Main Street',
-      addressLine2: 'Apartment 4B',
-      city: 'New York',
-      state: 'NY',
-      pincode: '10001',
-      addressType: 'Home',
-      isDefault: true,
-    ),
-    Address(
-      id: '2',
-      fullName: 'John Doe',
-      phoneNumber: '+1 234 567 8900',
-      addressLine1: '456 Office Park',
-      addressLine2: 'Suite 200',
-      city: 'New York',
-      state: 'NY',
-      pincode: '10002',
-      addressType: 'Office',
-      isDefault: false,
-    ),
-  ];
+  final AddressService _addressService = AddressService();
 
   @override
   Widget build(BuildContext context) {
@@ -48,16 +25,28 @@ class _AddressManagementPageState extends State<AddressManagementPage> {
         ),
         centerTitle: true,
         elevation: 0,
-        actions: [
-          IconButton(
-            icon: Icon(Icons.add, color: Colors.white),
-            onPressed: () {
-              _navigateToAddAddressPage();
-            },
-          ),
-        ],
       ),
-      body: addresses.isEmpty ? _buildEmptyState() : _buildAddressList(),
+      body: StreamBuilder<List<AddressModel>>(
+        stream: _addressService.getAddresses(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          }
+
+          if (snapshot.hasError) {
+            return Center(
+              child: Text('Error: ${snapshot.error}'),
+            );
+          }
+
+          if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return _buildEmptyState();
+          }
+
+          final addresses = snapshot.data!;
+          return _buildAddressList(addresses);
+        },
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           _navigateToAddAddressPage();
@@ -111,17 +100,17 @@ class _AddressManagementPageState extends State<AddressManagementPage> {
     );
   }
 
-  Widget _buildAddressList() {
+  Widget _buildAddressList(List<AddressModel> addresses) {
     return ListView.builder(
       padding: EdgeInsets.all(16),
       itemCount: addresses.length,
       itemBuilder: (context, index) {
-        return _buildAddressCard(addresses[index], index);
+        return _buildAddressCard(addresses[index]);
       },
     );
   }
 
-  Widget _buildAddressCard(Address address, int index) {
+  Widget _buildAddressCard(AddressModel address) {
     return Card(
       elevation: 2,
       margin: EdgeInsets.only(bottom: 16),
@@ -174,7 +163,7 @@ class _AddressManagementPageState extends State<AddressManagementPage> {
                 ),
                 PopupMenuButton<String>(
                   onSelected: (value) {
-                    _handleAddressAction(value, index);
+                    _handleAddressAction(value, address);
                   },
                   itemBuilder: (context) => [
                     PopupMenuItem(
@@ -270,56 +259,39 @@ class _AddressManagementPageState extends State<AddressManagementPage> {
     );
   }
 
-  void _navigateToAddAddressPage() {
-    Navigator.push(
+  void _navigateToAddAddressPage() async {
+    await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => AddEditAddressPage(
-          onSave: (newAddress) {
-            setState(() {
-              // If this is the first address, set it as default
-              if (addresses.isEmpty) {
-                newAddress.isDefault = true;
-              }
-              addresses.add(newAddress);
-            });
-          },
-        ),
+        builder: (context) => AddEditAddressPage(),
       ),
     );
   }
 
-  void _handleAddressAction(String action, int index) {
+  void _handleAddressAction(String action, AddressModel address) {
     switch (action) {
       case 'edit':
-        _editAddress(index);
+        _editAddress(address);
         break;
       case 'delete':
-        _deleteAddress(index);
+        _deleteAddress(address);
         break;
       case 'set_default':
-        _setDefaultAddress(index);
+        _setDefaultAddress(address);
         break;
     }
   }
 
-  void _editAddress(int index) {
-    Navigator.push(
+  void _editAddress(AddressModel address) async {
+    await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => AddEditAddressPage(
-          address: addresses[index],
-          onSave: (updatedAddress) {
-            setState(() {
-              addresses[index] = updatedAddress;
-            });
-          },
-        ),
+        builder: (context) => AddEditAddressPage(address: address),
       ),
     );
   }
 
-  void _deleteAddress(int index) {
+  void _deleteAddress(AddressModel address) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -331,21 +303,25 @@ class _AddressManagementPageState extends State<AddressManagementPage> {
             child: Text('Cancel'),
           ),
           ElevatedButton(
-            onPressed: () {
-              setState(() {
-                // If deleting default address, set another as default
-                if (addresses[index].isDefault && addresses.length > 1) {
-                  // Find another address to set as default
-                  for (int i = 0; i < addresses.length; i++) {
-                    if (i != index) {
-                      addresses[i].isDefault = true;
-                      break;
-                    }
-                  }
-                }
-                addresses.removeAt(index);
-              });
-              Navigator.pop(context);
+            onPressed: () async {
+              try {
+                await _addressService.deleteAddress(address.id);
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Address deleted successfully'),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+              } catch (e) {
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Error deleting address: $e'),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+              }
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.red,
@@ -357,38 +333,36 @@ class _AddressManagementPageState extends State<AddressManagementPage> {
     );
   }
 
-  void _setDefaultAddress(int index) {
-    setState(() {
-      // Remove default from all addresses
-      for (var address in addresses) {
-        address.isDefault = false;
-      }
-      // Set new default
-      addresses[index].isDefault = true;
-    });
-    
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Address set as default'),
-        backgroundColor: Colors.green,
-      ),
-    );
+  void _setDefaultAddress(AddressModel address) async {
+    try {
+      await _addressService.setDefault(address.id);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Address set as default'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error setting default address: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
-  void _useThisAddress(Address address) {
-    // Navigate back to booking page with selected address
+  void _useThisAddress(AddressModel address) {
     Navigator.pop(context, address);
   }
 }
 
 class AddEditAddressPage extends StatefulWidget {
-  final Address? address;
-  final Function(Address) onSave;
+  final AddressModel? address;
 
   const AddEditAddressPage({
     Key? key,
     this.address,
-    required this.onSave,
   }) : super(key: key);
 
   @override
@@ -408,6 +382,7 @@ class _AddEditAddressPageState extends State<AddEditAddressPage> {
   bool _isDefault = false;
 
   final List<String> _addressTypes = ['Home', 'Office', 'Other'];
+  final AddressService _addressService = AddressService();
 
   @override
   void initState() {
@@ -453,11 +428,9 @@ class _AddEditAddressPageState extends State<AddEditAddressPage> {
                   padding: EdgeInsets.all(16),
                   child: Column(
                     children: [
-                      // Address Type Selection
                       _buildAddressTypeSelection(),
                       SizedBox(height: 16),
                       
-                      // Full Name
                       _buildTextField(
                         controller: _fullNameController,
                         label: 'Full Name',
@@ -471,7 +444,6 @@ class _AddEditAddressPageState extends State<AddEditAddressPage> {
                       ),
                       SizedBox(height: 16),
 
-                      // Phone Number
                       _buildTextField(
                         controller: _phoneNumberController,
                         label: 'Phone Number',
@@ -489,7 +461,6 @@ class _AddEditAddressPageState extends State<AddEditAddressPage> {
                       ),
                       SizedBox(height: 16),
 
-                      // Address Line 1
                       _buildTextField(
                         controller: _addressLine1Controller,
                         label: 'Address Line 1',
@@ -503,7 +474,6 @@ class _AddEditAddressPageState extends State<AddEditAddressPage> {
                       ),
                       SizedBox(height: 16),
 
-                      // Address Line 2
                       _buildTextField(
                         controller: _addressLine2Controller,
                         label: 'Address Line 2 (Optional)',
@@ -511,7 +481,6 @@ class _AddEditAddressPageState extends State<AddEditAddressPage> {
                       ),
                       SizedBox(height: 16),
 
-                      // City, State, Pincode Row
                       Row(
                         children: [
                           Expanded(
@@ -545,7 +514,6 @@ class _AddEditAddressPageState extends State<AddEditAddressPage> {
                       ),
                       SizedBox(height: 16),
 
-                      // Pincode
                       _buildTextField(
                         controller: _pincodeController,
                         label: 'Pincode',
@@ -563,7 +531,6 @@ class _AddEditAddressPageState extends State<AddEditAddressPage> {
                       ),
                       SizedBox(height: 16),
 
-                      // Set as Default Checkbox
                       if (widget.address == null || !widget.address!.isDefault)
                         Row(
                           children: [
@@ -687,34 +654,52 @@ class _AddEditAddressPageState extends State<AddEditAddressPage> {
     );
   }
 
-  void _saveAddress() {
+  void _saveAddress() async {
     if (_formKey.currentState!.validate()) {
-      final address = Address(
-        id: widget.address?.id ?? DateTime.now().millisecondsSinceEpoch.toString(),
-        fullName: _fullNameController.text,
-        phoneNumber: _phoneNumberController.text,
-        addressLine1: _addressLine1Controller.text,
-        addressLine2: _addressLine2Controller.text,
-        city: _cityController.text,
-        state: _stateController.text,
-        pincode: _pincodeController.text,
-        addressType: _selectedAddressType,
-        isDefault: _isDefault,
-      );
+      try {
+        final address = AddressModel(
+          id: widget.address?.id ?? DateTime.now().millisecondsSinceEpoch.toString(),
+          fullName: _fullNameController.text,
+          phoneNumber: _phoneNumberController.text,
+          addressLine1: _addressLine1Controller.text,
+          addressLine2: _addressLine2Controller.text,
+          city: _cityController.text,
+          state: _stateController.text,
+          pincode: _pincodeController.text,
+          addressType: _selectedAddressType,
+          isDefault: _isDefault,
+        );
 
-      widget.onSave(address);
-      Navigator.pop(context);
-      
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            widget.address == null 
-                ? 'Address added successfully!' 
-                : 'Address updated successfully!',
+        if (widget.address == null) {
+          await _addressService.addAddress(address);
+        } else {
+          await _addressService.updateAddress(address);
+        }
+
+        if (_isDefault) {
+          await _addressService.setDefault(address.id);
+        }
+
+        Navigator.pop(context);
+        
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              widget.address == null 
+                  ? 'Address added successfully!' 
+                  : 'Address updated successfully!',
+            ),
+            backgroundColor: Colors.green,
           ),
-          backgroundColor: Colors.green,
-        ),
-      );
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error saving address: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 
@@ -728,47 +713,5 @@ class _AddEditAddressPageState extends State<AddEditAddressPage> {
     _stateController.dispose();
     _pincodeController.dispose();
     super.dispose();
-  }
-}
-
-class Address {
-  final String id;
-  final String fullName;
-  final String phoneNumber;
-  final String addressLine1;
-  final String addressLine2;
-  final String city;
-  final String state;
-  final String pincode;
-  final String addressType;
-  bool isDefault;
-
-  Address({
-    required this.id,
-    required this.fullName,
-    required this.phoneNumber,
-    required this.addressLine1,
-    required this.addressLine2,
-    required this.city,
-    required this.state,
-    required this.pincode,
-    required this.addressType,
-    this.isDefault = false,
-  });
-}
-
-// Usage in your main app:
-class HostelBookingApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Hostel Booking',
-      theme: ThemeData(
-        primaryColor: Color(0xffFEAA61),
-        primarySwatch: Colors.blue,
-      ),
-      home: AddressManagementPage(),
-      debugShowCheckedModeBanner: false,
-    );
   }
 }

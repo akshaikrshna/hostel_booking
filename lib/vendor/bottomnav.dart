@@ -8,8 +8,9 @@ import 'dart:ui';
 import 'package:hostel_booking/Homepage/homepage.dart';
 import 'package:hostel_booking/PgRooms/pgrooms.dart';
 import 'package:hostel_booking/Profile/profile.dart';
-import 'package:hostel_booking/vendor/home/adminhome.dart';
-import 'package:hostel_booking/vendor/home/person.dart';
+import 'package:hostel_booking/vendor/home/vendor_home.dart';
+import 'package:hostel_booking/vendor/home/bookings.dart';
+import 'package:hostel_booking/vendor/home/vendor_profile.dart';
 
 
 
@@ -30,6 +31,13 @@ class bottomnavState extends State<Bottomnav> with TickerProviderStateMixin {
       label: 'Home',
       gradient: const LinearGradient(
          colors: [Color(0xffFEAA61), Color.fromARGB(255, 236, 199, 167)],
+      ),
+    ),
+     NavItem(
+      icon: Icons.shopping_bag,
+      label: 'Bookings',
+      gradient: const LinearGradient(
+         colors: [Color(0xffFEAA61),Color.fromARGB(255, 236, 199, 167)],
       ),
     ),
     
@@ -194,6 +202,7 @@ class bottomnavState extends State<Bottomnav> with TickerProviderStateMixin {
       children:
       [
         Adminhome(),
+        Bookings(),
         Person(),
 
       ]);

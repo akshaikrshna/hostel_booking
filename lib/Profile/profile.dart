@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hostel_booking/Auth/authservice.dart';
 import 'package:hostel_booking/functions/functions.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 
 class Profile extends StatefulWidget {
@@ -12,15 +13,28 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
+
+   Future<void> openDialPad(String phoneNumber) async {
+  final Uri uri = Uri(
+    scheme: 'tel',
+    path: phoneNumber,
+  );
+
+  if (await canLaunchUrl(uri)) {
+    await launchUrl(uri);
+  } else {
+    throw 'Could not launch dialer';
+  }
+}
+
     Map<String, dynamic>? userData;
   final _authservice = AuthService();
 
       final Fetchuserdata fetchuser = Fetchuserdata();
 
     void loadUser() async {
-      userData = await fetchuser.getUserData();
+      userData = await fetchuser.getUserData(context);
       
-    
       if (!mounted) return;
 setState(() {});
     }
@@ -180,20 +194,13 @@ setState(() {});
                     _buildInfoCard(
                       title: "Settings",
                       children: [
-                        _buildSettingItem(
-                          icon: Icons.notifications_outlined,
-                          title: "Notifications",
-                          onTap: () {},
-                        ),
-                        _buildSettingItem(
-                          icon: Icons.security_outlined,
-                          title: "Privacy & Security",
-                          onTap: () {},
-                        ),
+                        
                         _buildSettingItem(
                           icon: Icons.help_outline,
                           title: "Help & Support",
-                          onTap: () {},
+                          onTap: () {
+                            openDialPad("9876543210");
+                          },
                         ),
                       ],
                     ),

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -6,6 +7,7 @@ import 'package:hostel_booking/Login/loginpage.dart';
 import 'package:hostel_booking/vendor/home/addhostel.dart';
 import 'package:hostel_booking/utils/constants/colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Person extends StatefulWidget {
   const Person({super.key});
@@ -15,16 +17,26 @@ class Person extends StatefulWidget {
 }
 
 class _PersonState extends State<Person> with SingleTickerProviderStateMixin {
+
+    Future<void> openDialPad(String phoneNumber) async {
+  final Uri uri = Uri(
+    scheme: 'tel',
+    path: phoneNumber,
+  );
+
+  if (await canLaunchUrl(uri)) {
+    await launchUrl(uri);
+  } else {
+    throw 'Could not launch dialer';
+  }
+}
+
+
   final _authservice = AuthService();
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
 
-  // User data - You can fetch this from Firebase/SharedPreferences
-  final String userName = "Akshay Krishna K";
-  final String userEmail = "akshay@gmail.com";
-  final String userPhone = "+91 9876543210";
-  final String userCity = "Manjeri";
-  final String userRole = "Vendor";
+  final String userId = FirebaseAuth.instance.currentUser!.uid;
 
   @override
   void initState() {
@@ -257,11 +269,16 @@ class _PersonState extends State<Person> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[50],
-      body: FadeTransition(
+      body:StreamBuilder(stream: FirebaseFirestore.instance.collection("User").doc(userId).snapshots(), builder: (context, snapshot) {
+          if(snapshot.connectionState==ConnectionState.waiting){  
+      return Center(child: CircularProgressIndicator(),);
+    }
+    var userData = snapshot.data!;
+
+        return  FadeTransition(
         opacity: _fadeAnimation,
         child: CustomScrollView(
           slivers: [
-            // Custom App Bar with Profile Header
             SliverAppBar(
               expandedHeight: 280.h,
               floating: false,
@@ -321,7 +338,7 @@ class _PersonState extends State<Person> with SingleTickerProviderStateMixin {
                           ),
                         ),
                         child: Text(
-                          userRole,
+                          userData['role'],
                           style: TextStyle(
                             fontSize: 13.sp,
                             color: AppColors.secondaryColor,
@@ -333,7 +350,7 @@ class _PersonState extends State<Person> with SingleTickerProviderStateMixin {
                       SizedBox(height: 10.h),
                       // User Name
                       Text(
-                        userName,
+                        userData['name'],
                         style: TextStyle(
                           fontSize: 22.sp,
                           fontWeight: FontWeight.bold,
@@ -372,19 +389,19 @@ class _PersonState extends State<Person> with SingleTickerProviderStateMixin {
                     _buildInfoCard(
                       icon: Icons.email_rounded,
                       title: "Email Address",
-                      subtitle: userEmail,
+                      subtitle: userData['email'],
                       iconColor: Colors.blue,
                     ),
                     _buildInfoCard(
                       icon: Icons.phone_android_rounded,
-                      title: "Phone Number",
-                      subtitle: userPhone,
+                      title: "Mobile Number",
+                      subtitle: userData['phonenumber'],
                       iconColor: Colors.green,
                     ),
                     _buildInfoCard(
                       icon: Icons.location_city_rounded,
                       title: "City",
-                      subtitle: userCity,
+                      subtitle: userData['address'],
                       iconColor: Colors.orange,
                     ),
                 
@@ -436,39 +453,12 @@ class _PersonState extends State<Person> with SingleTickerProviderStateMixin {
                     SizedBox(height: 12.h),
                 
                     _buildInfoCard(
-                      icon: Icons.settings_rounded,
-                      title: "Settings",
-                      subtitle: "App preferences and settings",
-                      iconColor: Colors.grey,
-                      onTap: () {
-                        // Navigate to settings
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('Settings feature coming soon!'),
-                            behavior: SnackBarBehavior.floating,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.r),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                    _buildInfoCard(
                       icon: Icons.help_rounded,
                       title: "Help & Support",
                       subtitle: "Get help and contact support",
                       iconColor: Colors.purple,
                       onTap: () {
-                        // Navigate to help
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('Help center opening...'),
-                            behavior: SnackBarBehavior.floating,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.r),
-                            ),
-                          ),
-                        );
+                         openDialPad("9876543210");
                       },
                     ),
                     _buildInfoCard(
@@ -547,7 +537,8 @@ class _PersonState extends State<Person> with SingleTickerProviderStateMixin {
             ),
           ],
         ),
-      ),
+      );
+      },)
     );
   }
 }

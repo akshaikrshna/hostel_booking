@@ -6,8 +6,6 @@ import 'package:hostel_booking/BottomNavBar/bottomnavbar.dart';
 import 'package:hostel_booking/Homepage/homepage.dart';
 import 'package:hostel_booking/Login/loginpage.dart';
 import 'package:hostel_booking/Model/usermodel.dart';
-import 'package:hostel_booking/vendor/bottomnav.dart';
-import 'package:hostel_booking/utils/helper/snackbar_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
@@ -48,7 +46,7 @@ class AuthService {
  Future<String?> login({
   required String email,
   required String password,
-}) async {
+  }) async {
   try {
     UserCredential credential =
         await _auth.signInWithEmailAndPassword(

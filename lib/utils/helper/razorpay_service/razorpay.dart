@@ -37,11 +37,7 @@ class RazorpayService {
   // Navigate if context is available
 
    
-    Navigator.pushReplacement(
-      navigatorKey.currentContext!,
-      MaterialPageRoute(builder: (context) => Successpayment()),
-    );
-
+    
     _showSnackBar(
       '✅ Payment Successful\nPayment ID: ${response.paymentId}',
       Colors.green,

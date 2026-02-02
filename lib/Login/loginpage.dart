@@ -190,16 +190,16 @@ class _LoginPage2State extends State<LoginPage2> {
                         ),
 
                         SizedBox(height: 10.h),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: TextButton(
-                            onPressed: () {},
-                            child: Text(
-                              "Forgot Password?",
-                              style: TextStyle(fontSize: 14.sp),
-                            ),
-                          ),
-                        ),
+                        // Align(
+                        //   alignment: Alignment.centerRight,
+                        //   child: TextButton(
+                        //     onPressed: () {},
+                        //     child: Text(
+                        //       "Forgot Password?",
+                        //       style: TextStyle(fontSize: 14.sp),
+                        //     ),
+                        //   ),
+                        // ),
                         SizedBox(height: 20.h),
 
                         /// LOGIN BUTTON

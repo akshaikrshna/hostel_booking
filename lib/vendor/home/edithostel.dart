@@ -9,32 +9,22 @@ import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class Addhostel extends StatefulWidget {
-  const Addhostel({super.key});
+class Edithostel extends StatefulWidget {
+  final Hostelmodel? hostelmodel;
+  const Edithostel({super.key, this.hostelmodel});
 
   @override
-  State<Addhostel> createState() => _AddhostelState();
+  State<Edithostel> createState() => _EdithostelState();
 }
 
-class _AddhostelState extends State<Addhostel> {
-
-    List<String> generateSearchKeywords(String text) {
-  List<String> keywords = [];
-
-  for (int i = 1; i <= text.length; i++) {
-    
-    keywords.add(text.substring(0, i ));
-  }
-  return keywords;
-}
-
+class _EdithostelState extends State<Edithostel> {
   final _formKey = GlobalKey<FormState>();
 
   String? selecteddormetry;
   List<String> dormetrytype = ["Hostel", "Paying guest"];
 
   String? selectedgenter;
-  List<String> gendertype = ["Males", "Females", "Mixed"];
+  List<String> gendertype = ["Males Only", "Females Only", "Mixed"];
 
   bool option1 = false;
   bool option2 = false;
@@ -88,108 +78,101 @@ class _AddhostelState extends State<Addhostel> {
     }
   }
 
-  Future<void> _submitData() async {
-    // Validate form
-    if (!_formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Row(
-            children: [
-              Icon(Icons.error_outline, color: Colors.white),
-              SizedBox(width: 8.w),
-              Expanded(child: 
-              
-              Text('Please fill all required fields')),
-            ],
-          ),
-          backgroundColor: Colors.orange,
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r)),
-        ),
-      );
-      return;
-    }
+ Future<void> _submitData() async {
+  // 1️⃣ Validate form
+  if (!_formKey.currentState!.validate()) {
+    _showErrorSnackBar('Please fill all required fields');
+    return;
+  }
 
-    if (selectedgenter == null) {
-      _showErrorSnackBar('Please select gender type');
-      return;
-    }
+  if (selectedgenter == null) {
+    _showErrorSnackBar('Please select gender type');
+    return;
+  }
 
-    if (selecteddormetry == null) {
-      _showErrorSnackBar('Please select accommodation category');
-      return;
-    }
+  if (selecteddormetry == null) {
+    _showErrorSnackBar('Please select accommodation category');
+    return;
+  }
 
-    if (phoneNumber == null || phoneNumber!.isEmpty) {
-      _showErrorSnackBar('Please enter phone number');
-      return;
-    }
+  if (phoneNumber == null || phoneNumber!.isEmpty) {
+    _showErrorSnackBar('Please enter phone number');
+    return;
+  }
 
-    if (pickedfile == null) {
-      _showErrorSnackBar('Please upload at least one image');
-      return;
-    }
+  setState(() => isLoading = true);
 
-    setState(() {
-      isLoading = true;
-    });
-
-    try {
+  try {
+    // 2️⃣ Image handling (keep old if unchanged)
+    if (pickedfile != null ||
+        pickedfile2 != null ||
+        pickedfile3 != null ||
+        pickedfile4 != null) {
       await pickAndUploadImage();
+    } else {
+      imageurl = widget.hostelmodel!.imageUrl ?? [];
+    }
 
-      Hostelmodel body = Hostelmodel();
-      body.ownerName = _ownerNameController.text.trim();
-      body.hostelName = _hostelnameController.text.trim();
-      body.searchKeywords = generateSearchKeywords(_hostelnameController.text.trim());
-      body.place = _placenameController.text.trim();
-      body.location = _locationController.text.trim();
-      body.address = _addressController.text.trim();
-      body.phone = phoneNumber;
-      body.price = _priceController.text.trim();
-      body.availableBeds = _availablebedController.text.trim();
-      body.discription = _discriptionController.text.trim();
-      body.selectedgenter = selectedgenter;
-      body.selecteddormetry = selecteddormetry;
-      body.hostelerid = FirebaseAuth.instance.currentUser?.uid;
-      body.imageUrl = imageurl;
-      body.amenities = Amenities(
+    // 3️⃣ Prepare update body
+    Hostelmodel body = Hostelmodel(
+      ownerName: _ownerNameController.text.trim(),
+      hostelName: _hostelnameController.text.trim(),
+      place: _placenameController.text.trim(),
+      location: _locationController.text.trim(),
+      address: _addressController.text.trim(),
+      phone: phoneNumber,
+      price: _priceController.text.trim(),
+      availableBeds: _availablebedController.text.trim(),
+      discription: _discriptionController.text.trim(),
+      selectedgenter: selectedgenter,
+      selecteddormetry: selecteddormetry,
+      hostelerid: widget.hostelmodel!.hostelerid,
+      imageUrl: imageurl,
+      amenities: Amenities(
         locker: option1,
         furnished: option2,
         food: option3,
         parking: option4,
         attachedBathroom: option5,
-      );
-      body.createdAt = Timestamp.now();
-      body.status = 1;
+      ),
+      createdAt: widget.hostelmodel!.createdAt, // keep original
+    );
 
-      await FirebaseFirestore.instance.collection('Hostels').add(body.toJson()).then((value) {
-        value.update( {'hostelid': value.id });
-      },);
+    // 4️⃣ UPDATE ONLY
+    await FirebaseFirestore.instance
+        .collection('Hostels')
+        .doc(widget.hostelmodel!.hostelid)
+        .update(body.toJson());
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Row(
-            children: [
-              Icon(Icons.check_circle, color: Colors.white),
-              SizedBox(width: 8.w),
-              Text('Hostel added successfully!'),
-            ],
-          ),
-          backgroundColor: Colors.green,
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r)),
-        ),
-      );
-
-      _clearForm();
-      Navigator.pop(context);
-    } catch (e) {
-      setState(() {
-        isLoading = false;
-      });
-      _showErrorSnackBar('Error: ${e.toString()}');
-    }
+    _showSuccessSnackBar('Hostel updated successfully!');
+    Navigator.pop(context);
+  } catch (e) {
+    _showErrorSnackBar('Error: $e');
+  } finally {
+    setState(() => isLoading = false);
   }
+}
+
+void _showSuccessSnackBar(String message) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Row(
+        children: [
+          const Icon(Icons.check_circle, color: Colors.white),
+          SizedBox(width: 8.w),
+          Expanded(child: Text(message)),
+        ],
+      ),
+      backgroundColor: Colors.green,
+      behavior: SnackBarBehavior.floating,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10.r),
+      ),
+    ),
+  );
+}
+
+
 
   void _showErrorSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -207,6 +190,49 @@ class _AddhostelState extends State<Addhostel> {
       ),
     );
   }
+
+  @override
+void initState() {
+  super.initState();
+
+  if (widget.hostelmodel != null) {
+    final h = widget.hostelmodel!;
+
+    _ownerNameController.text = h.ownerName ?? '';
+    _hostelnameController.text = h.hostelName ?? '';
+    _placenameController.text = h.place ?? '';
+    _locationController.text = h.location ?? '';
+    _addressController.text = h.address ?? '';
+    _priceController.text = h.price ?? '';
+    _availablebedController.text = h.availableBeds ?? '';
+    _discriptionController.text = h.discription ?? '';
+    imageurl = List.from(h.imageUrl ?? []);
+
+    phoneNumber = h.phone;
+    if (gendertype.contains(h.selectedgenter)) {
+      selectedgenter = h.selectedgenter;
+    } else {
+      selectedgenter = null; // fallback
+    }
+
+    // 🔧 FIX DORMETRY VALUE
+    if (dormetrytype.contains(h.selecteddormetry)) {
+      selecteddormetry = h.selecteddormetry;
+    } else {
+      selecteddormetry = null;
+    }
+    selecteddormetry = h.selecteddormetry;
+
+    option1 = h.amenities?.locker ?? false;
+    option2 = h.amenities?.furnished ?? false;
+    option3 = h.amenities?.food ?? false;
+    option4 = h.amenities?.parking ?? false;
+    option5 = h.amenities?.attachedBathroom ?? false;
+
+    imageurl = List.from(h.imageUrl ?? []);
+  }
+}
+
 
   void _clearForm() {
     _formKey.currentState?.reset();
@@ -544,43 +570,6 @@ class _AddhostelState extends State<Addhostel> {
                       items: dormetrytype,
                       onChanged: (value) => setState(() => selecteddormetry = value),
                     ),
-
-                    _buildSectionTitle(" Contact Information"),
-                    Text(
-                      "Phone Number",
-                      style: TextStyle(
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.grey[700],
-                      ),
-                    ),
-                    SizedBox(height: 6.h),
-                    IntlPhoneField(
-                      decoration: InputDecoration(
-                        hintText: "Enter phone number",
-                        hintStyle: TextStyle(fontSize: 13.sp, color: Colors.grey[400]),
-                        filled: true,
-                        fillColor: Colors.grey[50],
-                        contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12.r),
-                          borderSide: BorderSide(color: Colors.grey[300]!),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12.r),
-                          borderSide: BorderSide(color: Colors.grey[300]!),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12.r),
-                          borderSide: BorderSide(color: Color(0xffFEAA61), width: 2),
-                        ),
-                      ),
-                      initialCountryCode: 'IN',
-                      onChanged: (phone) {
-                        phoneNumber = phone.completeNumber;
-                      },
-                    ),
-
                     _buildSectionTitle(" Pricing & Availability"),
                     _buildTextField(
                       controller: _priceController,

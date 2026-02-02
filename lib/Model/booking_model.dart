@@ -18,7 +18,7 @@ class PaymentModel {
     String? hostelid;
     String? hostelname;
     String? hostelprice;
-    String? bedconunt;
+    String? bedcount;
     String? grandtotal;
     String? paymentstatus;
     int? status;
@@ -35,7 +35,7 @@ class PaymentModel {
         this.hostelid,
         this.hostelname,
         this.hostelprice,
-        this.bedconunt,
+        this.bedcount,
         this.grandtotal,
         this.paymentstatus,
         this.status,
@@ -56,7 +56,7 @@ class PaymentModel {
         hostelid: json["hostelid"],
         hostelname: json["hostelname"],
         hostelprice: json["hostelprice"],
-        bedconunt: json["bedconunt"],
+        bedcount: json["bedcount"],
         grandtotal: json["grandtotal"],
         paymentstatus: json["paymentstatus"],
         status: json["status"],
@@ -77,11 +77,10 @@ class PaymentModel {
         "hostelid": hostelid,
         "hostelname": hostelname,
         "hostelprice": hostelprice,
-        "bedconunt": bedconunt,
+        "bedcount": bedcount,
         "grandtotal": grandtotal,
         "paymentstatus": paymentstatus,
         "status": status,
-        "hostelerId": hostlerId,
         "checkindate": checkindate,
         "months": months,
     };

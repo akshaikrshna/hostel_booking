@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -18,11 +20,8 @@ class Prodectpage extends StatefulWidget {
 class _ProdectpageState extends State<Prodectpage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  final List<String> images = [
-    "https://picsum.photos/id/1025/800/500",
-    "https://picsum.photos/id/1018/800/500",
-    "https://picsum.photos/id/1016/800/500",
-  ];
+  List<String> images = [];
+  bool isFavorite = false;
 
   int currentIndex = 0;
 
@@ -32,7 +31,7 @@ class _ProdectpageState extends State<Prodectpage> {
       await launchUrl(dialUri);
     } else {
       print("Could not launch dialer");
-    }
+    }       
   }
 
   void openLocation() async {
@@ -83,6 +82,25 @@ class _ProdectpageState extends State<Prodectpage> {
     );
   }
 
+  Future<void> checkIfFavorite() async {
+  if (widget.hosteldetailes?.hostelid == null) return;
+
+  final doc = await _firestore
+      .collection('favorites')
+      .doc(widget.hosteldetailes!.hostelid)
+      .get();
+
+  setState(() {
+    isFavorite = doc.exists;
+  });
+}
+@override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    checkIfFavorite();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -111,6 +129,18 @@ class _ProdectpageState extends State<Prodectpage> {
             ),
             child: IconButton(
               onPressed: () async{
+                
+                 final hostelId = widget.hosteldetailes?.hostelid;
+                if (hostelId == null) return;
+                
+                if (isFavorite) {
+                  // Handle unfavorite action
+                  await _firestore
+                      .collection('favorites')
+                      .doc(hostelId)
+                      .delete();
+                }else {
+
                 // Handle favorite action
                 await _firestore
                     .collection('favorites')
@@ -130,8 +160,12 @@ class _ProdectpageState extends State<Prodectpage> {
                   'hostelid': widget.hosteldetailes?.hostelid,
                   
                 });
+                }
+                setState(() {
+                  isFavorite = !isFavorite;
+                });
               },
-              icon: Icon(Icons.favorite_border, color: Colors.white, size: 20.sp),
+              icon: Icon(isFavorite ? Icons.favorite: Icons.favorite_border, color:isFavorite ? Colors.red :Colors.white, size: 20.sp),
               padding: EdgeInsets.zero,
             ),
           ),
@@ -140,12 +174,11 @@ class _ProdectpageState extends State<Prodectpage> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // Image Carousel Section
             Stack(
               children: [
                 CarouselSlider(
-                  items: images
-                      .map(
+                  items: widget.hosteldetailes!.imageUrl
+                      ?.map(
                         (e) => Image.network(
                           e,
                           fit: BoxFit.cover,
@@ -168,7 +201,7 @@ class _ProdectpageState extends State<Prodectpage> {
                   right: 0,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: images.asMap().entries.map((entry) {
+                    children:  widget.hosteldetailes!.imageUrl!.asMap().entries.map((entry) {
                       return Container(
                         width: 8.w,
                         height: 8.h,
@@ -296,7 +329,7 @@ class _ProdectpageState extends State<Prodectpage> {
                               borderRadius: BorderRadius.circular(8.r),
                             ),
                             child: Text(
-                              "Best Deal",
+                              "${widget.hosteldetailes?.selecteddormetry}",
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 12.sp,

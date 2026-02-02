@@ -24,6 +24,8 @@ class Hostelmodel {
   String? selectedgenter;
   String? selecteddormetry;
   String? hostelerid;
+  int? status;
+  List<String>? searchKeywords;
 
   Hostelmodel({
     this.hostelid,
@@ -42,6 +44,8 @@ class Hostelmodel {
     this.selectedgenter,
     this.selecteddormetry,
     this.hostelerid,
+    this.status,
+    this.searchKeywords,
   });
 
   /// 🔹 Create a model from JSON / Firestore Map
@@ -69,6 +73,8 @@ class Hostelmodel {
         selectedgenter: json["selectedgenter"],
         selecteddormetry: json["selecteddormetry"],
         hostelerid: json["hostelerId"],
+        status: json["status"],
+        searchKeywords: List<String>.from(json['searchKeywords'] ?? []),
 
       );
 
@@ -91,6 +97,8 @@ class Hostelmodel {
         "selectedgenter":selectedgenter,
         "selecteddormetry":selecteddormetry,
         "hostelerId":hostelerid,
+        "status":status,
+        'searchKeywords': searchKeywords,
       };
 }
 
